@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #f2f4f3;
+  --surface: #fdfdfc;
+  --ink: #14201c;
+  --ink-soft: #4b5a54;
+  --border: #dbe1de;
+  --signal: #e8542c;
+  --signal-soft: #fdece6;
+  --wire: #2f6e62;
+  --wire-soft: #e6f1ee;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.font-display {
+  font-family: var(--font-newsreader), Georgia, serif;
+}
+
+.font-mono-meta {
+  font-family: var(--font-ibm-mono), "SFMono-Regular", monospace;
+  letter-spacing: 0.02em;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+.live-dot { animation: pulse-dot 1.6s ease-in-out infinite; }
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.post-enter { animation: slide-in 0.35s ease-out; }
+
+@keyframes flash-highlight {
+  0% { background-color: var(--signal-soft); }
+  100% { background-color: transparent; }
+}
+.flash-highlight { animation: flash-highlight 1.4s ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot, .post-enter, .flash-highlight { animation: none !important; }
+}
