@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getProfileByUserId, getProfileByUsername } from "@/lib/data";
 import Navbar from "@/components/Navbar";
 import PostCard from "@/components/PostCard";
+import EditProfileModal from "@/components/EditProfileModal";
 import FollowButton from "@/components/FollowButton";
 import type { Post } from "@/lib/types";
 

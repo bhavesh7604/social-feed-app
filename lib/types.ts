@@ -7,6 +7,8 @@ export type Profile = {
   created_at: string;
 };
 
+export type UserProfile = Profile;
+
 export type Post = {
   id: string;
   author_id: string;

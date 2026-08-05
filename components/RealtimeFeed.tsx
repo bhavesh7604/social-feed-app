@@ -1,135 +1,135 @@
-"use client";
+// components/RealtimeFeed.tsx
+'use client'
 
-import { useEffect, useRef, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useEffect, useState, useRef, useCallback } from 'react'
+import { createClient } from '@/lib/supabase/client'
 import PostCard from "@/components/PostCard";
-import type { Post, Profile } from "@/lib/types";
+import PostSkeleton from "@/components/PostSkeleton";
+import { Post, Profile } from '@/lib/types'
+
+const PAGE_SIZE = 5;
+
+interface RealtimeFeedProps {
+  initialPosts?: Post[];
+  currentUser: Profile;
+}
 
 export default function RealtimeFeed({
-  initialPosts,
+  initialPosts = [],
   currentUser,
-  followedAuthorIds,
-}: {
-  initialPosts: Post[];
-  currentUser: Profile;
-  followedAuthorIds: string[];
-}) {
-  const supabase = createClient();
-  const [posts, setPosts] = useState<Post[]>(initialPosts);
-  const [liveCount, setLiveCount] = useState(0);
-  const followedSet = useRef(new Set(followedAuthorIds));
+}: RealtimeFeedProps) {
+  const [posts, setPosts] = useState<Post[]>(initialPosts)
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(initialPosts.length >= PAGE_SIZE)
+  const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    followedSet.current = new Set(followedAuthorIds);
-  }, [followedAuthorIds]);
+  const observerRef = useRef<HTMLDivElement | null>(null)
+  const supabase = createClient()
 
+  // Fetch next batch of posts
+  const fetchMorePosts = useCallback(async () => {
+    if (loading || !hasMore) return
+    setLoading(true)
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    const { data: follows } = await supabase
+      .from('follows')
+      .select('following_id')
+      .eq('follower_id', user.id)
+
+    const followingIds = follows ? follows.map((f) => f.following_id) : []
+    const feedUserIds = [...followingIds, user.id]
+
+    const start = page * PAGE_SIZE
+    const end = start + PAGE_SIZE - 1
+
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*, profiles(*), likes(*), comments(*)')
+      .in('user_id', feedUserIds)
+      .order('created_at', { ascending: false })
+      .range(start, end)
+
+    if (error) {
+      console.error('Error fetching more posts:', error)
+    } else if (data) {
+      if (data.length < PAGE_SIZE) setHasMore(false)
+      setPosts((prev) => [...prev, ...data])
+      setPage((prev) => prev + 1)
+    }
+
+    setLoading(false)
+  }, [page, loading, hasMore, supabase])
+
+  // Setup Realtime WebSocket Listener
   useEffect(() => {
     const channel = supabase
-      .channel("feed:posts")
+      .channel('realtime_feed_posts')
       .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "posts" },
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'posts' },
         async (payload) => {
-          const newPost = payload.new as Post;
-          if (!followedSet.current.has(newPost.author_id)) return;
+          const { data } = await supabase
+            .from('posts')
+            .select('*, profiles(*), likes(*), comments(*)')
+            .eq('id', payload.new.id)
+            .single()
 
-          const { data: author } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", newPost.author_id)
-            .single();
-
-          setPosts((prev) => [
-            {
-              ...newPost,
-              author,
-              like_count: 0,
-              comment_count: 0,
-              liked_by_me: false,
-            },
-            ...prev,
-          ]);
-          setLiveCount((n) => n + 1);
+          if (data) {
+            setPosts((prev) => [data, ...prev.filter((p) => p.id !== data.id)])
+          }
         }
       )
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "likes" },
-        (payload) => {
-          const like = payload.new as { post_id: string; user_id: string };
-          setPosts((prev) =>
-            prev.map((p) =>
-              p.id === like.post_id
-                ? {
-                    ...p,
-                    like_count: (p.like_count ?? 0) + 1,
-                    liked_by_me: like.user_id === currentUser.id ? true : p.liked_by_me,
-                  }
-                : p
-            )
-          );
-        }
-      )
-      .on(
-        "postgres_changes",
-        { event: "DELETE", schema: "public", table: "likes" },
-        (payload) => {
-          const like = payload.old as { post_id: string; user_id: string };
-          setPosts((prev) =>
-            prev.map((p) =>
-              p.id === like.post_id
-                ? {
-                    ...p,
-                    like_count: Math.max(0, (p.like_count ?? 1) - 1),
-                    liked_by_me: like.user_id === currentUser.id ? false : p.liked_by_me,
-                  }
-                : p
-            )
-          );
-        }
-      )
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "comments" },
-        (payload) => {
-          const comment = payload.new as { post_id: string };
-          setPosts((prev) =>
-            prev.map((p) =>
-              p.id === comment.post_id
-                ? { ...p, comment_count: (p.comment_count ?? 0) + 1 }
-                : p
-            )
-          );
-        }
-      )
-      .subscribe();
+      .subscribe()
 
     return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [supabase, currentUser.id]);
+      supabase.removeChannel(channel)
+    }
+  }, [supabase])
+
+  // Infinite Scroll Trigger
+  useEffect(() => {
+    const target = observerRef.current
+    if (!target) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          fetchMorePosts()
+        }
+      },
+      { threshold: 0.5 }
+    )
+
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [fetchMorePosts, hasMore])
 
   return (
-    <div>
-      <div className="flex items-center gap-2 mb-3 font-mono-meta text-[11px] uppercase tracking-widest text-[var(--wire)]">
-        <span className="w-1.5 h-1.5 rounded-full bg-[var(--wire)] live-dot" />
-        Live feed{liveCount > 0 ? ` — ${liveCount} new since you arrived` : ""}
-      </div>
+    <div className="w-full">
+      {posts.map((post) => (
+        <PostCard 
+          key={post.id} 
+          post={post} 
+          currentUser={currentUser} 
+        />
+      ))}
 
-      {posts.length === 0 && (
-        <div className="rounded-lg border border-dashed border-[var(--border)] p-8 text-center">
-          <p className="font-display text-lg">Nothing on the wire yet</p>
-          <p className="text-sm text-[var(--ink-soft)] mt-1">
-            Follow people or post something to get the feed moving.
-          </p>
+      {loading && (
+        <div className="mt-4">
+          <PostSkeleton />
         </div>
       )}
 
-      <div className="space-y-3">
-        {posts.map((post, i) => (
-          <PostCard key={post.id} post={post} currentUser={currentUser} highlight={i === 0 && liveCount > 0} />
-        ))}
-      </div>
+      <div ref={observerRef} className="h-12 w-full" />
+
+      {!hasMore && posts.length > 0 && (
+        <p className="text-center text-xs text-neutral-500 py-6">
+          You've reached the end of the wire.
+        </p>
+      )}
     </div>
-  );
+  )
 }

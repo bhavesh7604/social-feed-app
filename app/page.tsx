@@ -1,48 +1,68 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { getFeedPosts, getFollowingIds, getProfileByUserId } from "@/lib/data";
-import Navbar from "@/components/Navbar";
-import PostComposer from "@/components/PostComposer";
-import RealtimeFeed from "@/components/RealtimeFeed";
-import Link from "next/link";
+// app/page.tsx
+import { createClient } from '@/lib/supabase/server'
+import RealtimeFeed from '@/components/RealtimeFeed'
+import PostComposer from '@/components/PostComposer'
+import Navbar from '@/components/Navbar'
+import { redirect } from 'next/navigation'
 
-export default async function FeedPage() {
-  const supabase = await createClient();
+export const revalidate = 0
+
+export default async function HomePage() {
+  const supabase = await createClient()
+
+  // 1. Check authenticated user session
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
-  if (!user) redirect("/login");
+  if (!user) {
+    redirect('/login')
+  }
 
-  const profile = await getProfileByUserId(supabase, user.id);
-  if (!profile) redirect("/login");
+  // 2. Fetch profile of the logged-in user
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single()
 
-  const followingIds = await getFollowingIds(supabase, user.id);
-  const feedAuthorIds = [user.id, ...followingIds];
-  const posts = await getFeedPosts(supabase, user.id, feedAuthorIds);
+  if (!profile) {
+    redirect('/login')
+  }
+
+  // 3. Fetch list of user IDs that the current user follows
+  const { data: follows } = await supabase
+    .from('follows')
+    .select('following_id')
+    .eq('follower_id', user.id)
+
+  const followingIds = follows ? follows.map((f) => f.following_id) : []
+  const feedUserIds = [...followingIds, user.id]
+
+  // 4. Fetch initial batch (first 5 posts) for Server-Side Rendering
+  const { data: initialPosts, error } = await supabase
+    .from('posts')
+    .select('*, profiles(*), likes(*), comments(*)')
+    .in('user_id', feedUserIds)
+    .order('created_at', { ascending: false })
+    .range(0, 4)
+
+  if (error) {
+    console.error('Error loading initial feed:', error)
+  }
 
   return (
-    <div>
+    <div className="min-h-screen bg-black text-white">
       <Navbar profile={profile} />
-      <main className="max-w-2xl mx-auto px-4 py-6 space-y-5">
+      
+      <main className="max-w-xl mx-auto px-4 py-6 space-y-6">
         <PostComposer profile={profile} />
 
-        {followingIds.length === 0 && (
-          <p className="text-sm text-[var(--ink-soft)] font-mono-meta">
-            You&apos;re not following anyone yet.{" "}
-            <Link href="/discover" className="text-[var(--wire)] underline underline-offset-2">
-              Find people
-            </Link>{" "}
-            to build your feed.
-          </p>
-        )}
-
-        <RealtimeFeed
-          initialPosts={posts}
-          currentUser={profile}
-          followedAuthorIds={feedAuthorIds}
+        <RealtimeFeed 
+          initialPosts={initialPosts || []} 
+          currentUser={profile} 
         />
       </main>
     </div>
-  );
+  )
 }
