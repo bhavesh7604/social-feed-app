@@ -1,48 +1,72 @@
-"use client";
+// components/Navbar.tsx
+'use client'
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import type { Profile } from "@/lib/types";
+import Link from 'next/link'
+import { Profile } from '@/lib/types'
+import { createClient } from '@/lib/supabase/client'
+import { useRouter } from 'next/navigation'
 
-export default function Navbar({ profile }: { profile: Profile | null }) {
-  const router = useRouter();
-  const supabase = createClient();
+export default function Navbar({ profile }: { profile: Profile }) {
+  const router = useRouter()
+  const supabase = createClient()
 
-  async function handleSignOut() {
-    await supabase.auth.signOut();
-    router.push("/login");
-    router.refresh();
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    router.push('/login')
+    router.refresh()
   }
 
   return (
-    <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--bg)]/90 backdrop-blur">
-      <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[var(--signal)] live-dot" />
-          <span className="font-display text-lg tracking-tight">Wire</span>
+    <header className="sticky top-0 z-40 w-full glass-card border-b border-slate-200/80 bg-white/70 backdrop-blur-md">
+      <div className="max-w-xl mx-auto px-4 h-16 flex items-center justify-between">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2 group">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-pink-500 via-purple-500 to-indigo-500 flex items-center justify-center text-white font-black text-sm shadow-md group-hover:scale-105 transition">
+            W
+          </div>
+          <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+            Wire
+          </span>
         </Link>
 
-        <nav className="flex items-center gap-4 font-mono-meta text-xs uppercase tracking-wide">
-          <Link href="/" className="text-[var(--ink-soft)] hover:text-[var(--ink)] transition">
+        {/* Navigation Items */}
+        <nav className="flex items-center gap-4">
+          <Link
+            href="/"
+            className="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition"
+          >
             Feed
           </Link>
-          {profile && (
-            <Link
-              href={`/profile/${profile.username}`}
-              className="text-[var(--ink-soft)] hover:text-[var(--ink)] transition"
-            >
-              {profile.username}
-            </Link>
-          )}
+          <Link
+            href="/discover"
+            className="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition"
+          >
+            Discover
+          </Link>
+          <Link
+            href={`/profile/${profile.username}`}
+            className="flex items-center gap-2 p-1 rounded-full hover:bg-slate-100 transition"
+          >
+            {profile.avatar_url ? (
+              <img
+                src={profile.avatar_url}
+                alt={profile.username}
+                className="w-8 h-8 rounded-full object-cover ring-2 ring-indigo-500/20"
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
+                {profile.username?.[0]?.toUpperCase()}
+              </div>
+            )}
+          </Link>
           <button
             onClick={handleSignOut}
-            className="text-[var(--ink-soft)] hover:text-[var(--signal)] transition"
+            className="text-xs font-semibold text-slate-400 hover:text-rose-500 transition ml-2"
           >
             Sign out
           </button>
         </nav>
       </div>
     </header>
-  );
+  )
 }
