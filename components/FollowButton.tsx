@@ -1,58 +1,77 @@
-"use client";
+// components/FollowButton.tsx
+'use client'
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
+
+interface FollowButtonProps {
+  targetUserId: string
+  currentUserId: string
+  initialIsFollowing: boolean
+  onFollowToggle?: (isFollowing: boolean) => void
+}
 
 export default function FollowButton({
   targetUserId,
   currentUserId,
-  initialFollowing,
-}: {
-  targetUserId: string;
-  currentUserId: string;
-  initialFollowing: boolean;
-}) {
-  const supabase = createClient();
-  const router = useRouter();
-  const [following, setFollowing] = useState(initialFollowing);
-  const [busy, setBusy] = useState(false);
+  initialIsFollowing,
+  onFollowToggle,
+}: FollowButtonProps) {
+  const [isFollowing, setIsFollowing] = useState(initialIsFollowing)
+  const [loading, setLoading] = useState(false)
+  const supabase = createClient()
 
-  if (targetUserId === currentUserId) return null;
+  // Don't render button if viewing own profile
+  if (targetUserId === currentUserId) return null
 
-  async function toggle() {
-    if (busy) return;
-    setBusy(true);
-    const next = !following;
-    setFollowing(next);
+  const handleToggleFollow = async () => {
+    if (loading) return
+    setLoading(true)
 
-    if (next) {
-      const { error } = await supabase
-        .from("follows")
-        .insert({ follower_id: currentUserId, following_id: targetUserId });
-      if (error) setFollowing(false);
-    } else {
-      const { error } = await supabase
-        .from("follows")
-        .delete()
-        .eq("follower_id", currentUserId)
-        .eq("following_id", targetUserId);
-      if (error) setFollowing(true);
+    // Optimistic UI update
+    const nextState = !isFollowing
+    setIsFollowing(nextState)
+
+    try {
+      if (nextState) {
+        // Follow target user
+        const { error } = await supabase
+          .from('follows')
+          .insert({ follower_id: currentUserId, following_id: targetUserId })
+
+        if (error) throw error
+      } else {
+        // Unfollow target user
+        const { error } = await supabase
+          .from('follows')
+          .delete()
+          .eq('follower_id', currentUserId)
+          .eq('following_id', targetUserId)
+
+        if (error) throw error
+      }
+
+      if (onFollowToggle) onFollowToggle(nextState)
+    } catch (err: any) {
+      // Revert optimistic update on failure
+      setIsFollowing(!nextState)
+      console.error('Follow toggle error:', err.message)
+    } finally {
+      setLoading(false)
     }
-    setBusy(false);
-    router.refresh();
   }
 
   return (
     <button
-      onClick={toggle}
-      className={`px-3 py-1.5 rounded-md text-xs font-mono-meta uppercase tracking-wide border transition ${
-        following
-          ? "border-[var(--border)] text-[var(--ink-soft)] hover:border-[var(--signal)] hover:text-[var(--signal)]"
-          : "border-[var(--ink)] bg-[var(--ink)] text-white hover:opacity-90"
+      onClick={handleToggleFollow}
+      disabled={loading}
+      className={`px-5 py-2 text-xs font-bold rounded-xl transition cursor-pointer disabled:opacity-50 ${
+        isFollowing
+          ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
+          : 'btn-gradient shadow-sm hover:shadow-md'
       }`}
     >
-      {following ? "Following" : "Follow"}
+      {loading ? '...' : isFollowing ? 'Following' : 'Follow'}
     </button>
-  );
+  )
 }

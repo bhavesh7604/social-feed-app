@@ -1,126 +1,121 @@
-"use client";
+// components/PostComposer.tsx
+'use client'
 
-import { useRef, useState } from "react";
-import { ImagePlus, X } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
-import type { Profile } from "@/lib/types";
+import { useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import { Profile } from '@/lib/types'
 
 export default function PostComposer({ profile }: { profile: Profile }) {
-  const supabase = createClient();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [content, setContent] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
-  const [posting, setPosting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [content, setContent] = useState('')
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [loading, setLoading] = useState(false)
+  
+  const supabase = createClient()
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0];
-    if (!f) return;
-    setFile(f);
-    setPreview(URL.createObjectURL(f));
-  }
+  const handlePost = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!content.trim() && !imageFile) return
 
-  function clearImage() {
-    setFile(null);
-    setPreview(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  }
+    setLoading(true)
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!content.trim() || posting) return;
-    setPosting(true);
-    setError(null);
+    try {
+      let imageUrl = null
 
-    let image_url: string | null = null;
+      if (imageFile) {
+        const fileExt = imageFile.name.split('.').pop()
+        const filePath = `posts/${profile.id}-${Date.now()}.${fileExt}`
 
-    if (file) {
-      const path = `${profile.id}/${Date.now()}-${file.name}`;
-      const { error: uploadError } = await supabase.storage
-        .from("post-images")
-        .upload(path, file);
+        const { error: uploadError } = await supabase.storage
+          .from('post-images')
+          .upload(filePath, imageFile)
 
-      if (uploadError) {
-        setError(uploadError.message);
-        setPosting(false);
-        return;
+        if (uploadError) throw uploadError
+
+        const { data: publicUrlData } = supabase.storage
+          .from('post-images')
+          .getPublicUrl(filePath)
+
+        imageUrl = publicUrlData.publicUrl
       }
-      const { data } = supabase.storage.from("post-images").getPublicUrl(path);
-      image_url = data.publicUrl;
+
+      const { error } = await supabase.from('posts').insert({
+        user_id: profile.id,
+        content,
+        image_url: imageUrl,
+      })
+
+      if (error) throw error
+
+      setContent('')
+      setImageFile(null)
+    } catch (err: any) {
+      alert('Error creating post: ' + err.message)
+    } finally {
+      setLoading(false)
     }
-
-    const { error: insertError } = await supabase
-      .from("posts")
-      .insert({ author_id: profile.id, content: content.trim(), image_url });
-
-    setPosting(false);
-
-    if (insertError) {
-      setError(insertError.message);
-      return;
-    }
-
-    setContent("");
-    clearImage();
-    // Realtime subscription on the feed picks up the new post automatically.
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4"
-    >
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="What's moving right now?"
-        rows={3}
-        maxLength={2000}
-        className="w-full resize-none outline-none text-sm bg-transparent placeholder:text-[var(--ink-soft)]"
-      />
+    <div className="glass-card rounded-2xl p-4 shadow-sm border border-slate-200/80">
+      <form onSubmit={handlePost} className="space-y-3">
+        <div className="flex gap-3">
+          {profile.avatar_url ? (
+            <img
+              src={profile.avatar_url}
+              alt={profile.username}
+              className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-500/20"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center font-bold text-indigo-600">
+              {profile.username?.[0]?.toUpperCase()}
+            </div>
+          )}
 
-      {preview && (
-        <div className="relative mt-2 inline-block">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={preview} alt="Selected upload preview" className="max-h-56 rounded-md" />
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="What's on your mind?"
+            rows={2}
+            className="w-full bg-transparent resize-none border-none focus:outline-none text-sm text-slate-900 placeholder:text-slate-400"
+          />
+        </div>
+
+        {imageFile && (
+          <div className="flex items-center justify-between bg-slate-100 px-3 py-1.5 rounded-lg text-xs text-slate-600">
+            <span>📷 {imageFile.name}</span>
+            <button
+              type="button"
+              onClick={() => setImageFile(null)}
+              className="text-slate-400 hover:text-rose-500 font-bold"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
+        <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+          <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-indigo-600 cursor-pointer transition">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 002-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            Add Image
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+            />
+          </label>
+
           <button
-            type="button"
-            onClick={clearImage}
-            className="absolute -top-2 -right-2 bg-[var(--ink)] text-white rounded-full p-1"
+            type="submit"
+            disabled={loading || (!content.trim() && !imageFile)}
+            className="btn-gradient px-4 py-1.5 rounded-xl text-xs font-bold disabled:opacity-40 cursor-pointer"
           >
-            <X size={12} />
+            {loading ? 'Posting...' : 'Post'}
           </button>
         </div>
-      )}
-
-      {error && <p className="text-xs text-[var(--signal)] font-mono-meta mt-2">{error}</p>}
-
-      <div className="flex items-center justify-between mt-3">
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          className="text-[var(--ink-soft)] hover:text-[var(--wire)] transition"
-          aria-label="Add image"
-        >
-          <ImagePlus size={18} strokeWidth={1.75} />
-        </button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="hidden"
-        />
-
-        <button
-          type="submit"
-          disabled={!content.trim() || posting}
-          className="text-xs font-mono-meta uppercase tracking-wide px-4 py-1.5 rounded-md bg-[var(--signal)] text-white disabled:opacity-40 hover:opacity-90 transition"
-        >
-          {posting ? "Posting…" : "Post"}
-        </button>
-      </div>
-    </form>
-  );
+      </form>
+    </div>
+  )
 }

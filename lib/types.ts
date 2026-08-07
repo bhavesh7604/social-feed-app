@@ -1,31 +1,36 @@
-export type Profile = {
-  id: string;
-  username: string;
-  display_name: string | null;
-  avatar_url: string | null;
-  bio: string | null;
-  created_at: string;
-};
+// lib/types.ts
 
-export type UserProfile = Profile;
+export interface Profile {
+  id: string
+  username: string
+  full_name: string | null
+  avatar_url: string | null
+  bio: string | null
+  updated_at?: string
+}
 
-export type Post = {
-  id: string;
-  author_id: string;
-  content: string;
-  image_url: string | null;
-  created_at: string;
-  author?: Profile;
-  like_count?: number;
-  comment_count?: number;
-  liked_by_me?: boolean;
-};
+export interface Like {
+  id: string
+  post_id: string
+  user_id: string
+  created_at: string
+}
 
-export type Comment = {
-  id: string;
-  post_id: string;
-  author_id: string;
-  content: string;
-  created_at: string;
-  author?: Profile;
-};
+export interface Comment {
+  id: string
+  post_id: string
+  user_id: string
+  content: string
+  created_at: string
+}
+
+export interface Post {
+  id: string
+  user_id: string
+  content: string | null
+  image_url: string | null
+  created_at: string
+  profiles?: Profile
+  likes?: Like[]
+  comments?: Comment[]
+}

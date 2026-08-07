@@ -1,69 +1,92 @@
-"use client";
+// components/PostCard.tsx
+'use client'
 
-import Link from "next/link";
-import { formatDistanceToNowStrict } from "date-fns";
-import { MessageCircle } from "lucide-react";
-import LikeButton from "@/components/LikeButton";
-import type { Post, Profile } from "@/lib/types";
+import Link from 'next/link'
+import LikeButton from '@/components/LikeButton'
+import { Post, Profile } from '@/lib/types'
 
-export default function PostCard({
-  post,
-  currentUser,
-  highlight,
-}: {
-  post: Post;
-  currentUser: Profile;
-  highlight?: boolean;
-}) {
+interface PostCardProps {
+  post: Post
+  currentUser: Profile
+}
+
+export default function PostCard({ post, currentUser }: PostCardProps) {
+  const profile = post.profiles
+
+  // Check if current user has already liked this post
+  const isLikedByCurrentUser = post.likes?.some(
+    (like) => like.user_id === currentUser.id
+  ) || false
+
   return (
-    <article
-      className={`rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 ${
-        highlight ? "post-enter flash-highlight" : ""
-      }`}
-    >
-      <div className="flex items-center justify-between">
+    <div className="glass-card rounded-2xl border border-slate-200/80 mb-4 overflow-hidden">
+      {/* Card Header */}
+      <div className="p-4 flex items-center justify-between">
         <Link
-          href={`/profile/${post.author?.username}`}
-          className="flex items-center gap-2 group"
+          href={`/profile/${profile?.username}`}
+          className="flex items-center gap-3 group"
         >
-          <span className="w-7 h-7 rounded-full bg-[var(--wire-soft)] text-[var(--wire)] flex items-center justify-center text-xs font-medium">
-            {post.author?.username?.[0]?.toUpperCase() ?? "?"}
-          </span>
-          <span className="text-sm font-medium group-hover:underline">
-            {post.author?.username ?? "unknown"}
-          </span>
+          {profile?.avatar_url ? (
+            <img
+              src={profile.avatar_url}
+              alt={profile.username}
+              className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-500/20 group-hover:scale-105 transition"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center font-bold text-indigo-600 text-sm">
+              {profile?.username?.[0]?.toUpperCase()}
+            </div>
+          )}
+
+          <div>
+            <h3 className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition">
+              {profile?.full_name || profile?.username}
+            </h3>
+            <p className="text-xs text-slate-400">@{profile?.username}</p>
+          </div>
         </Link>
-        <time className="font-mono-meta text-[11px] text-[var(--ink-soft)]">
-          {formatDistanceToNowStrict(new Date(post.created_at))} ago
-        </time>
       </div>
 
-      <p className="mt-2.5 text-[15px] leading-relaxed whitespace-pre-wrap">{post.content}</p>
-
-      {post.image_url && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={post.image_url}
-          alt="Post attachment"
-          className="mt-3 rounded-md max-h-96 w-full object-cover"
-        />
+      {/* Post Content */}
+      {post.content && (
+        <p className="px-4 pb-3 text-sm text-slate-800 leading-relaxed">
+          {post.content}
+        </p>
       )}
 
-      <div className="flex items-center gap-4 mt-3">
-        <LikeButton
-          postId={post.id}
-          userId={currentUser.id}
-          initialLiked={!!post.liked_by_me}
-          initialCount={post.like_count ?? 0}
-        />
-        <Link
-          href={`/post/${post.id}`}
-          className="flex items-center gap-1.5 text-xs font-mono-meta text-[var(--ink-soft)] hover:text-[var(--wire)] transition"
-        >
-          <MessageCircle size={15} strokeWidth={1.75} />
-          {post.comment_count ?? 0}
-        </Link>
+      {/* Post Media */}
+      {post.image_url && (
+        <div className="w-full bg-slate-100 overflow-hidden border-y border-slate-100">
+          <img
+            src={post.image_url}
+            alt="Post media"
+            className="w-full h-auto max-h-[500px] object-cover"
+          />
+        </div>
+      )}
+
+      {/* Footer Actions */}
+      <div className="p-4 flex items-center justify-between border-t border-slate-100/60 bg-slate-50/50">
+        <div className="flex items-center gap-4">
+          <LikeButton
+            postId={post.id}
+            userId={currentUser.id}
+            initialLiked={isLikedByCurrentUser}
+            initialCount={post.likes?.length || 0}
+          />
+
+          <Link
+            href={`/post/${post.id}`}
+            className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-indigo-600 transition"
+          >
+            💬 <span>{post.comments?.length || 0}</span>
+          </Link>
+        </div>
+
+        <span className="text-[10px] font-medium text-slate-400">
+          {new Date(post.created_at).toLocaleDateString()}
+        </span>
       </div>
-    </article>
-  );
+    </div>
+  )
 }

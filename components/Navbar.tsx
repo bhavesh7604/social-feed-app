@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Profile } from '@/lib/types'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import NotificationDropdown from '@/components/NotificationDropdown'
 
 export default function Navbar({ profile }: { profile: Profile }) {
   const router = useRouter()
@@ -30,22 +31,27 @@ export default function Navbar({ profile }: { profile: Profile }) {
         </Link>
 
         {/* Navigation Items */}
-        <nav className="flex items-center gap-4">
+        <nav className="flex items-center gap-3">
           <Link
             href="/"
-            className="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition"
+            className="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition px-2 py-1 rounded-lg hover:bg-slate-100"
           >
             Feed
           </Link>
           <Link
             href="/discover"
-            className="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition"
+            className="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition px-2 py-1 rounded-lg hover:bg-slate-100"
           >
             Discover
           </Link>
+
+          {/* Live Notification Dropdown */}
+          {profile?.id && <NotificationDropdown userId={profile.id} />}
+
+          {/* User Profile Avatar Link */}
           <Link
             href={`/profile/${profile.username}`}
-            className="flex items-center gap-2 p-1 rounded-full hover:bg-slate-100 transition"
+            className="flex items-center gap-2 p-1 rounded-full hover:bg-slate-100 transition ml-1"
           >
             {profile.avatar_url ? (
               <img
@@ -59,9 +65,11 @@ export default function Navbar({ profile }: { profile: Profile }) {
               </div>
             )}
           </Link>
+
+          {/* Sign Out */}
           <button
             onClick={handleSignOut}
-            className="text-xs font-semibold text-slate-400 hover:text-rose-500 transition ml-2"
+            className="text-xs font-semibold text-slate-400 hover:text-rose-500 transition ml-2 cursor-pointer"
           >
             Sign out
           </button>
