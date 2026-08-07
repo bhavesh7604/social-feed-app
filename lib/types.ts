@@ -34,3 +34,29 @@ export interface Post {
   likes?: Like[]
   comments?: Comment[]
 }
+
+// Add these exports to lib/types.ts
+
+export interface Message {
+  id: string
+  conversation_id: string
+  sender_id: string
+  content: string
+  created_at: string
+  sender?: Profile
+}
+
+export interface ConversationParticipant {
+  id: string
+  conversation_id: string
+  user_id: string
+  profiles?: Profile
+}
+
+export interface Conversation {
+  id: string
+  created_at: string
+  updated_at: string
+  conversation_participants?: ConversationParticipant[]
+  last_message?: Message
+}

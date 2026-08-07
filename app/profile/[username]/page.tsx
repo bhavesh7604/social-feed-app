@@ -50,6 +50,75 @@ export default async function ProfilePage({
     .single()
 
   const isFollowing = !!followRecord
+  const isOwnProfile = user.id === targetProfile.id
+
+  // Server Action to initiate or navigate to DM conversation
+
+  async function handleStartChat() {
+    'use server'
+    const supabaseServer = await createClient()
+    const {
+      data: { user: authUser },
+    } = await supabaseServer.auth.getUser()
+
+    if (!authUser) return
+
+    // Find existing conversation between the two users
+    const { data: myParticipants } = await supabaseServer
+      .from('conversation_participants')
+      .select('conversation_id')
+      .eq('user_id', authUser.id)
+
+    const myConvoIds = myParticipants?.map((p) => p.conversation_id) || []
+
+    let existingConvoId: string | null = null
+
+    if (myConvoIds.length > 0) {
+      const { data: sharedParticipant } = await supabaseServer
+        .from('conversation_participants')
+        .select('conversation_id')
+        .eq('user_id', targetProfile.id)
+        .in('conversation_id', myConvoIds)
+        .maybeSingle()
+
+      if (sharedParticipant) {
+        existingConvoId = sharedParticipant.conversation_id
+      }
+    }
+
+    let targetConvoId = existingConvoId
+
+    // If no existing conversation, create a new one
+    if (!targetConvoId) {
+      const { data: newConvo, error: convoError } = await supabaseServer
+        .from('conversations')
+        .insert([{ created_at: new Date().toISOString() }])
+        .select()
+        .single()
+
+      if (convoError || !newConvo) {
+        console.error('Database Error when creating conversation:', convoError)
+        throw new Error(`Failed to create conversation: ${convoError?.message || 'Unknown error'}`)
+      }
+
+      targetConvoId = newConvo.id
+
+      // Add both users to conversation_participants
+      const { error: participantError } = await supabaseServer
+        .from('conversation_participants')
+        .insert([
+          { conversation_id: targetConvoId, user_id: authUser.id },
+          { conversation_id: targetConvoId, user_id: targetProfile.id },
+        ])
+
+      if (participantError) {
+        console.error('Participant Error:', participantError)
+        throw new Error(`Failed to add participants: ${participantError.message}`)
+      }
+    }
+
+    redirect(`/messages?conversationId=${targetConvoId}`)
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -75,14 +144,30 @@ export default async function ProfilePage({
               <h1 className="text-xl font-extrabold text-slate-900">
                 {targetProfile.full_name || targetProfile.username}
               </h1>
-              <p className="text-xs font-semibold text-indigo-600">@{targetProfile.username}</p>
+              <p className="text-xs font-semibold text-indigo-600">
+                @{targetProfile.username}
+              </p>
             </div>
 
-            <FollowButton
-              targetUserId={targetProfile.id}
-              currentUserId={user.id}
-              initialIsFollowing={isFollowing}
-            />
+            {/* Action Buttons */}
+            {!isOwnProfile && (
+              <div className="flex items-center gap-2">
+                <FollowButton
+                  targetUserId={targetProfile.id}
+                  currentUserId={user.id}
+                  initialIsFollowing={isFollowing}
+                />
+
+                <form action={handleStartChat}>
+                  <button
+                    type="submit"
+                    className="px-4 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition cursor-pointer"
+                  >
+                    Message
+                  </button>
+                </form>
+              </div>
+            )}
           </div>
 
           {targetProfile.bio && (
@@ -101,7 +186,7 @@ export default async function ProfilePage({
           </div>
         </div>
 
-        {/* User's Timeline */}
+        {/* User's Posts Feed */}
         <div className="space-y-4">
           <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider px-1">
             Posts

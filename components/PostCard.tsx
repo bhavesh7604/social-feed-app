@@ -60,7 +60,7 @@ export default function PostCard({ post, currentUser }: PostCardProps) {
           <img
             src={post.image_url}
             alt="Post media"
-            className="w-full h-auto max-h-[500px] object-cover"
+            className="w-full h-auto max-h-125 object-cover"
           />
         </div>
       )}
