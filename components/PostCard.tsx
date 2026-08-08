@@ -84,9 +84,13 @@ export default function PostCard({ post, currentUser }: PostCardProps) {
         </div>
 
         <span className="text-[10px] font-medium text-slate-400">
-          {new Date(post.created_at).toLocaleDateString()}
+          {new Date(post.created_at).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })}
         </span>
       </div>
     </div>
-  )
+  );
 }
