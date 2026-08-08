@@ -8,6 +8,7 @@ export interface Profile {
   bio: string | null
   updated_at?: string
 }
+export type UserProfile = Profile
 
 export interface Like {
   id: string
@@ -17,11 +18,16 @@ export interface Like {
 }
 
 export interface Comment {
-  id: string
-  post_id: string
-  user_id: string
-  content: string
-  created_at: string
+  id: string;
+  post_id: string;
+  user_id: string;    // Ensure user_id is defined
+  author_id?: string; // Add author_id as optional if both are used across your app
+  content: string;
+  created_at: string;
+  profiles?: {
+    username: string;
+    avatar_url: string;
+  };
 }
 
 export interface Post {

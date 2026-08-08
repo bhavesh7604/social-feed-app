@@ -5,6 +5,8 @@ import { formatDistanceToNowStrict } from "date-fns";
 import { createClient } from "@/lib/supabase/client";
 import type { Comment, Profile } from "@/lib/types";
 
+type ExtendedComment = Comment & { author?: Profile };
+
 export default function CommentSection({
   postId,
   currentUser,
@@ -12,10 +14,10 @@ export default function CommentSection({
 }: {
   postId: string;
   currentUser: Profile;
-  initialComments: Comment[];
+  initialComments: ExtendedComment[];
 }) {
   const supabase = createClient();
-  const [comments, setComments] = useState<Comment[]>(initialComments);
+  const [comments, setComments] = useState<ExtendedComment[]>(initialComments);
   const [text, setText] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -24,7 +26,12 @@ export default function CommentSection({
       .channel(`comments:${postId}`)
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "comments", filter: `post_id=eq.${postId}` },
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "comments",
+          filter: `post_id=eq.${postId}`,
+        },
         async (payload) => {
           const newComment = payload.new as Comment;
           // Skip our own optimistic insert duplicate
@@ -37,15 +44,15 @@ export default function CommentSection({
           const { data: author } = await supabase
             .from("profiles")
             .select("*")
-            .eq("id", newComment.author_id)
+            .eq("id", newComment.user_id || (newComment as any).author_id)
             .single();
 
           if (author) {
             setComments((prev) =>
-              prev.map((c) => (c.id === newComment.id ? { ...c, author } : c))
+              prev.map((c) => (c.id === newComment.id ? { ...c, author } : c)),
             );
           }
-        }
+        },
       )
       .subscribe();
 
@@ -61,7 +68,11 @@ export default function CommentSection({
 
     const { data, error } = await supabase
       .from("comments")
-      .insert({ post_id: postId, author_id: currentUser.id, content: text.trim() })
+      .insert({
+        post_id: postId,
+        author_id: currentUser.id,
+        content: text.trim(),
+      })
       .select("*")
       .single();
 
