@@ -84,16 +84,16 @@ export default function CommentSection({
   }
 
   return (
-    <div className="mt-3 pt-3 border-t border-[var(--border)]">
+    <div className="mt-3 pt-3 border-t border-(--border)">
       <ul className="space-y-2.5">
         {comments.map((c) => (
           <li key={c.id} className="text-sm flex gap-2">
             <span className="font-medium">{c.author?.username ?? "…"}</span>
-            <span className="text-[var(--ink-soft)]">{c.content}</span>
+            <span className="text-(--ink-soft)">{c.content}</span>
           </li>
         ))}
         {comments.length === 0 && (
-          <li className="text-sm text-[var(--ink-soft)] font-mono-meta">
+          <li className="text-sm text-(--ink-soft) font-mono-meta">
             No comments yet — be first on the wire.
           </li>
         )}
@@ -104,12 +104,12 @@ export default function CommentSection({
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Add a comment…"
-          className="flex-1 rounded-md border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-[var(--wire)]"
+          className="flex-1 rounded-md border border-(--border) bg-(--surface) px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-(--wire)"
         />
         <button
           type="submit"
           disabled={submitting || !text.trim()}
-          className="text-xs font-mono-meta uppercase tracking-wide px-3 rounded-md bg-[var(--ink)] text-white disabled:opacity-40"
+          className="text-xs font-mono-meta uppercase tracking-wide px-3 rounded-md bg-(--ink) text-white disabled:opacity-40"
         >
           Post
         </button>

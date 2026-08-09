@@ -23,6 +23,10 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "Wire — a live social feed",
   description: "Post, follow, and watch the feed update in real time.",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+  },
 };
 
 export default function RootLayout({

@@ -1,71 +1,78 @@
 // app/messages/page.tsx
-import { createClient } from '@/lib/supabase/server'
-import Navbar from '@/components/Navbar'
-import ChatThread from '@/components/ChatThread'
-import Link from 'next/link'
-import { redirect } from 'next/navigation'
+import { createClient } from "@/lib/supabase/server";
+import Navbar from "@/components/Navbar";
+import ChatThread from "@/components/ChatThread";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default async function MessagesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ conversationId?: string }>
+  searchParams: Promise<{ conversationId?: string }>;
 }) {
-  const { conversationId } = await searchParams
-  const supabase = await createClient()
+  const { conversationId } = await searchParams;
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
-  if (!user) redirect('/login')
+  if (!user) redirect("/login");
 
   const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single()
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
 
   // Fetch all conversations for current user
   const { data: userParticipants } = await supabase
-    .from('conversation_participants')
-    .select('conversation_id')
-    .eq('user_id', user.id)
+    .from("conversation_participants")
+    .select("conversation_id")
+    .eq("user_id", user.id);
 
-  const conversationIds = userParticipants?.map((p) => p.conversation_id) || []
+  const conversationIds = userParticipants?.map((p) => p.conversation_id) || [];
 
   // Fetch participants of those conversations (excluding current user)
   const { data: conversations } = await supabase
-    .from('conversation_participants')
-    .select('conversation_id, profiles!user_id(*)')
-    .in('conversation_id', conversationIds.length ? conversationIds : ['00000000-0000-0000-0000-000000000000'])
-    .neq('user_id', user.id)
+    .from("conversation_participants")
+    .select("conversation_id, profiles!user_id(*)")
+    .in(
+      "conversation_id",
+      conversationIds.length
+        ? conversationIds
+        : ["00000000-0000-0000-0000-000000000000"],
+    )
+    .neq("user_id", user.id);
 
   const activeConversation = conversations?.find(
-    (c) => c.conversation_id === conversationId
-  )
+    (c) => c.conversation_id === conversationId,
+  );
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar profile={profile} />
 
-      <main className="max-w-4xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <main className="w-full max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-3 gap-6 sm:px-6">
         {/* Conversations Sidebar */}
-        <div className="glass-card rounded-2xl border border-slate-200/80 p-4 space-y-3 h-[600px] overflow-y-auto">
+        <div className="glass-card rounded-2xl border border-slate-200/80 p-4 space-y-3 min-h-[40vh] md:h-150 overflow-y-auto">
           <h2 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">
             Messages
           </h2>
 
           <div className="space-y-1">
             {conversations?.map((item) => {
-              const partner = item.profiles as any
-              const isActive = item.conversation_id === conversationId
+              const partner = item.profiles as any;
+              const isActive = item.conversation_id === conversationId;
 
               return (
                 <Link
                   key={item.conversation_id}
                   href={`/messages?conversationId=${item.conversation_id}`}
                   className={`flex items-center gap-3 p-3 rounded-xl transition ${
-                    isActive ? 'bg-indigo-50 border border-indigo-100' : 'hover:bg-slate-100/60'
+                    isActive
+                      ? "bg-indigo-50 border border-indigo-100"
+                      : "hover:bg-slate-100/60"
                   }`}
                 >
                   {partner?.avatar_url ? (
@@ -83,15 +90,18 @@ export default async function MessagesPage({
                     <p className="text-xs font-bold text-slate-900 truncate">
                       {partner?.full_name || partner?.username}
                     </p>
-                    <p className="text-[11px] text-slate-400 truncate">@{partner?.username}</p>
+                    <p className="text-[11px] text-slate-400 truncate">
+                      @{partner?.username}
+                    </p>
                   </div>
                 </Link>
-              )
+              );
             })}
 
             {(!conversations || conversations.length === 0) && (
               <p className="text-xs text-slate-400 text-center py-10">
-                No active conversations yet. Visit a user's profile to message them!
+                No active conversations yet. Visit a user's profile to message
+                them!
               </p>
             )}
           </div>
@@ -106,14 +116,16 @@ export default async function MessagesPage({
               recipientProfile={activeConversation.profiles as any}
             />
           ) : (
-            <div className="glass-card rounded-2xl border border-slate-200/80 h-[600px] flex flex-col items-center justify-center text-center p-6 text-slate-400">
+            <div className="glass-card rounded-2xl border border-slate-200/80 min-h-[40vh] md:h-150 flex flex-col items-center justify-center text-center p-6 text-slate-400">
               <span className="text-4xl mb-2">💬</span>
               <p className="text-sm font-semibold">Your Direct Messages</p>
-              <p className="text-xs">Select a conversation from the left to start chatting.</p>
+              <p className="text-xs">
+                Select a conversation from the left to start chatting.
+              </p>
             </div>
           )}
         </div>
       </main>
     </div>
-  )
+  );
 }

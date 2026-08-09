@@ -1,48 +1,50 @@
 // app/discover/page.tsx
-import { createClient } from '@/lib/supabase/server'
-import Navbar from '@/components/Navbar'
-import FollowButton from '@/components/FollowButton'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
+import { createClient } from "@/lib/supabase/server";
+import Navbar from "@/components/Navbar";
+import FollowButton from "@/components/FollowButton";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 
-export const revalidate = 0
+export const revalidate = 0;
 
 export default async function DiscoverPage() {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
-  if (!user) redirect('/login')
+  if (!user) redirect("/login");
 
   const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single()
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
 
   // Fetch all profiles except logged in user
   const { data: allProfiles } = await supabase
-    .from('profiles')
-    .select('*')
-    .neq('id', user.id)
+    .from("profiles")
+    .select("*")
+    .neq("id", user.id);
 
   // Fetch who current user already follows
   const { data: follows } = await supabase
-    .from('follows')
-    .select('following_id')
-    .eq('follower_id', user.id)
+    .from("follows")
+    .select("following_id")
+    .eq("follower_id", user.id);
 
-  const followingSet = new Set(follows?.map((f) => f.following_id) || [])
+  const followingSet = new Set(follows?.map((f) => f.following_id) || []);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar profile={profile} />
 
-      <main className="max-w-xl mx-auto px-4 py-8 space-y-6">
+      <main className="w-full max-w-xl mx-auto px-4 py-8 space-y-6 sm:px-6">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight">Discover People</h1>
+          <h1 className="text-2xl font-extrabold tracking-tight">
+            Discover People
+          </h1>
           <p className="text-xs text-slate-500">
             Follow creators to personalize your live feed.
           </p>
@@ -50,12 +52,12 @@ export default async function DiscoverPage() {
 
         <div className="space-y-3">
           {allProfiles?.map((p) => {
-            const isFollowing = followingSet.has(p.id)
+            const isFollowing = followingSet.has(p.id);
 
             return (
               <div
                 key={p.id}
-                className="glass-card p-4 rounded-2xl flex items-center justify-between"
+                className="glass-card p-4 rounded-2xl flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
               >
                 <Link
                   href={`/profile/${p.username}`}
@@ -87,10 +89,10 @@ export default async function DiscoverPage() {
                   initialIsFollowing={isFollowing}
                 />
               </div>
-            )
+            );
           })}
         </div>
       </main>
     </div>
-  )
+  );
 }

@@ -1,30 +1,29 @@
 // components/PostCard.tsx
-'use client'
+"use client";
 
-import Link from 'next/link'
-import LikeButton from '@/components/LikeButton'
-import { Post, Profile } from '@/lib/types'
+import Link from "next/link";
+import LikeButton from "@/components/LikeButton";
+import { Post, Profile } from "@/lib/types";
 
 interface PostCardProps {
-  post: Post
-  currentUser: Profile
+  post: Post;
+  currentUser: Profile;
 }
 
 export default function PostCard({ post, currentUser }: PostCardProps) {
-  const profile = post.profiles
+  const profile = post.profiles;
 
   // Check if current user has already liked this post
-  const isLikedByCurrentUser = post.likes?.some(
-    (like) => like.user_id === currentUser.id
-  ) || false
+  const isLikedByCurrentUser =
+    post.likes?.some((like) => like.user_id === currentUser.id) || false;
 
   return (
     <div className="glass-card rounded-2xl border border-slate-200/80 mb-4 overflow-hidden">
       {/* Card Header */}
-      <div className="p-4 flex items-center justify-between">
+      <div className="p-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <Link
           href={`/profile/${profile?.username}`}
-          className="flex items-center gap-3 group"
+          className="flex items-center gap-3 min-w-0 group"
         >
           {profile?.avatar_url ? (
             <img
@@ -49,7 +48,7 @@ export default function PostCard({ post, currentUser }: PostCardProps) {
 
       {/* Post Content */}
       {post.content && (
-        <p className="px-4 pb-3 text-sm text-slate-800 leading-relaxed">
+        <p className="px-4 pb-3 text-sm sm:text-base text-slate-800 leading-relaxed">
           {post.content}
         </p>
       )}
@@ -66,8 +65,8 @@ export default function PostCard({ post, currentUser }: PostCardProps) {
       )}
 
       {/* Footer Actions */}
-      <div className="p-4 flex items-center justify-between border-t border-slate-100/60 bg-slate-50/50">
-        <div className="flex items-center gap-4">
+      <div className="p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-slate-100/60 bg-slate-50/50">
+        <div className="flex flex-wrap items-center gap-3">
           <LikeButton
             postId={post.id}
             userId={currentUser.id}
@@ -83,7 +82,7 @@ export default function PostCard({ post, currentUser }: PostCardProps) {
           </Link>
         </div>
 
-        <span className="text-[10px] font-medium text-slate-400">
+        <span className="text-[10px] sm:text-xs font-medium text-slate-400">
           {new Date(post.created_at).toLocaleDateString("en-US", {
             year: "numeric",
             month: "short",

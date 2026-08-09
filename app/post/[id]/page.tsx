@@ -52,10 +52,10 @@ export default async function PostDetailPage({
   return (
     <div>
       <Navbar profile={currentProfile} />
-      <main className="max-w-2xl mx-auto px-4 py-6 space-y-4">
+      <main className="w-full max-w-2xl mx-auto px-4 py-6 space-y-4 sm:px-6">
         <PostCard post={enrichedPost} currentUser={currentProfile} />
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
-          <h2 className="font-mono-meta text-xs uppercase tracking-widest text-[var(--wire)] mb-1">
+        <div className="rounded-lg border border-(--border) bg-(--surface) p-4">
+          <h2 className="font-mono-meta text-xs uppercase tracking-widest text-(--wire) mb-1">
             Comments
           </h2>
           <CommentSection

@@ -1,42 +1,42 @@
 // app/login/page.tsx
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const router = useRouter()
-  const supabase = createClient()
+  const router = useRouter();
+  const supabase = createClient();
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
-    })
+    });
 
     if (error) {
-      setError(error.message)
-      setLoading(false)
+      setError(error.message);
+      setLoading(false);
     } else {
-      router.push('/')
-      router.refresh()
+      router.push("/");
+      router.refresh();
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md glass-card rounded-3xl p-8 space-y-6">
+      <div className="w-full max-w-sm sm:max-w-md glass-card rounded-3xl p-8 space-y-6">
         {/* Brand Header */}
         <div className="text-center space-y-2">
           <span className="text-xs font-black tracking-widest text-indigo-600 uppercase bg-indigo-50 px-3 py-1 rounded-full">
@@ -91,13 +91,13 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full btn-gradient py-3.5 rounded-xl text-sm shadow-sm hover:shadow-md transition cursor-pointer disabled:opacity-50"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
 
         {/* Sign Up Redirect */}
         <div className="pt-4 border-t border-slate-100 text-center text-sm text-slate-500">
-          New here?{' '}
+          New here?{" "}
           <Link
             href="/signup"
             className="font-bold text-indigo-600 hover:text-indigo-500 transition"
@@ -107,5 +107,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,14 +1,14 @@
 // components/ChatThread.tsx
-'use client'
+"use client";
 
-import { useState, useEffect, useRef } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { Message, Profile } from '@/lib/types'
+import { useState, useEffect, useRef } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { Message, Profile } from "@/lib/types";
 
 interface ChatThreadProps {
-  conversationId: string
-  currentUserId: string
-  recipientProfile: Profile
+  conversationId: string;
+  currentUserId: string;
+  recipientProfile: Profile;
 }
 
 export default function ChatThread({
@@ -16,91 +16,91 @@ export default function ChatThread({
   currentUserId,
   recipientProfile,
 }: ChatThreadProps) {
-  const [messages, setMessages] = useState<Message[]>([])
-  const [newMessage, setNewMessage] = useState('')
-  const [sending, setSending] = useState(false)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-  const supabase = createClient()
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [sending, setSending] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const supabase = createClient();
 
   // Auto-scroll to bottom of messages
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   // Load existing messages
   useEffect(() => {
     async function loadMessages() {
       const { data } = await supabase
-        .from('messages')
-        .select('*, sender:profiles!sender_id(*)')
-        .eq('conversation_id', conversationId)
-        .order('created_at', { ascending: true })
+        .from("messages")
+        .select("*, sender:profiles!sender_id(*)")
+        .eq("conversation_id", conversationId)
+        .order("created_at", { ascending: true });
 
       if (data) {
-        setMessages(data as unknown as Message[])
-        setTimeout(scrollToBottom, 100)
+        setMessages(data as unknown as Message[]);
+        setTimeout(scrollToBottom, 100);
       }
     }
 
-    loadMessages()
-  }, [conversationId, supabase])
+    loadMessages();
+  }, [conversationId, supabase]);
 
   // Realtime subscription for new incoming messages
   useEffect(() => {
     const channel = supabase
       .channel(`chat_${conversationId}`)
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
           filter: `conversation_id=eq.${conversationId}`,
         },
         async (payload) => {
           // Fetch sender details for the new message
           const { data } = await supabase
-            .from('messages')
-            .select('*, sender:profiles!sender_id(*)')
-            .eq('id', payload.new.id)
-            .single()
+            .from("messages")
+            .select("*, sender:profiles!sender_id(*)")
+            .eq("id", payload.new.id)
+            .single();
 
           if (data) {
-            setMessages((prev) => [...prev, data as unknown as Message])
-            setTimeout(scrollToBottom, 50)
+            setMessages((prev) => [...prev, data as unknown as Message]);
+            setTimeout(scrollToBottom, 50);
           }
-        }
+        },
       )
-      .subscribe()
+      .subscribe();
 
     return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [conversationId, supabase])
+      supabase.removeChannel(channel);
+    };
+  }, [conversationId, supabase]);
 
   // Send message
   const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!newMessage.trim() || sending) return
+    e.preventDefault();
+    if (!newMessage.trim() || sending) return;
 
-    setSending(true)
-    const contentText = newMessage.trim()
-    setNewMessage('')
+    setSending(true);
+    const contentText = newMessage.trim();
+    setNewMessage("");
 
-    const { error } = await supabase.from('messages').insert({
+    const { error } = await supabase.from("messages").insert({
       conversation_id: conversationId,
       sender_id: currentUserId,
       content: contentText,
-    })
+    });
 
     if (error) {
-      alert('Failed to send message: ' + error.message)
+      alert("Failed to send message: " + error.message);
     }
-    setSending(false)
-  }
+    setSending(false);
+  };
 
   return (
-    <div className="flex flex-col h-[600px] glass-card rounded-2xl border border-slate-200/80 overflow-hidden">
+    <div className="flex flex-col min-h-[60vh] md:h-150 glass-card rounded-2xl border border-slate-200/80 overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-slate-100 bg-white/50 flex items-center gap-3">
         {recipientProfile.avatar_url ? (
@@ -125,28 +125,28 @@ export default function ChatThread({
       {/* Messages Feed */}
       <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50/50">
         {messages.map((msg) => {
-          const isMe = msg.sender_id === currentUserId
+          const isMe = msg.sender_id === currentUserId;
           return (
             <div
               key={msg.id}
-              className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
+              className={`flex ${isMe ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[75%] px-4 py-2 rounded-2xl text-sm ${
+                className={`max-w-[90%] sm:max-w-[75%] px-4 py-2 rounded-2xl text-sm ${
                   isMe
-                    ? 'bg-gradient-to-tr from-indigo-600 to-indigo-500 text-white rounded-br-none shadow-sm'
-                    : 'bg-white text-slate-800 border border-slate-200/80 rounded-bl-none shadow-sm'
+                    ? "bg-linear-to-tr from-indigo-600 to-indigo-500 text-white rounded-br-none shadow-sm"
+                    : "bg-white text-slate-800 border border-slate-200/80 rounded-bl-none shadow-sm"
                 }`}
               >
                 <p>{msg.content}</p>
                 <span
                   className={`text-[9px] block mt-1 ${
-                    isMe ? 'text-indigo-100 text-right' : 'text-slate-400'
+                    isMe ? "text-indigo-100 text-right" : "text-slate-400"
                   }`}
                 >
                   {new Date(msg.created_at).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
+                    hour: "2-digit",
+                    minute: "2-digit",
                   })}
                 </span>
               </div>
@@ -157,7 +157,10 @@ export default function ChatThread({
       </div>
 
       {/* Message Input */}
-      <form onSubmit={handleSendMessage} className="p-3 border-t border-slate-100 bg-white flex gap-2">
+      <form
+        onSubmit={handleSendMessage}
+        className="p-3 border-t border-slate-100 bg-white flex gap-2"
+      >
         <input
           type="text"
           value={newMessage}
@@ -168,11 +171,11 @@ export default function ChatThread({
         <button
           type="submit"
           disabled={!newMessage.trim() || sending}
-          className="btn-gradient px-4 py-2 rounded-xl text-xs font-bold disabled:opacity-40"
+          className="w-full sm:w-auto btn-gradient px-4 py-2 rounded-xl text-xs font-bold disabled:opacity-40"
         >
           Send
         </button>
       </form>
     </div>
-  )
+  );
 }

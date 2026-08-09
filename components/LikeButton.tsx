@@ -28,7 +28,9 @@ export default function LikeButton({
     setCount((c) => c + (nextLiked ? 1 : -1));
 
     if (nextLiked) {
-      const { error } = await supabase.from("likes").insert({ post_id: postId, user_id: userId });
+      const { error } = await supabase
+        .from("likes")
+        .insert({ post_id: postId, user_id: userId });
       if (error) {
         setLiked(false);
         setCount((c) => c - 1);
@@ -51,10 +53,14 @@ export default function LikeButton({
     <button
       onClick={toggle}
       className={`flex items-center gap-1.5 text-xs font-mono-meta transition ${
-        liked ? "text-[var(--signal)]" : "text-[var(--ink-soft)] hover:text-[var(--signal)]"
+        liked ? "text-(--signal)" : "text-(--ink-soft) hover:text-(--signal)"
       }`}
     >
-      <Heart size={15} fill={liked ? "var(--signal)" : "none"} strokeWidth={1.75} />
+      <Heart
+        size={15}
+        fill={liked ? "var(--signal)" : "none"}
+        strokeWidth={1.75}
+      />
       {count}
     </button>
   );
