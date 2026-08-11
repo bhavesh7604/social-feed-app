@@ -105,6 +105,13 @@ export default function LoginPage() {
             Create an account
           </Link>
         </div>
+
+        <div className="text-center text-xs text-slate-500">
+          <p>
+            Made with <span aria-label="heart">❤️</span> in India
+          </p>
+          <p className="mt-1 font-medium text-slate-700">Bhavesh Mali</p>
+        </div>
       </div>
     </div>
   );
