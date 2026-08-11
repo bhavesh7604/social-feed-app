@@ -144,6 +144,13 @@ export default function SignupPage() {
             Sign in
           </Link>
         </p>
+
+        <div className="mt-8 text-center text-xs text-(--ink-soft)">
+          <p>
+            Made with <span aria-label="heart">❤️</span> in India
+          </p>
+          <p className="mt-1 font-medium text-(--ink)">Bhavesh Mali</p>
+        </div>
       </div>
     </div>
   );
