@@ -43,19 +43,21 @@ export default function SignupPage() {
 
   if (checkEmail) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4 text-center">
-        <div className="w-full max-w-sm sm:max-w-md mx-auto">
-          <span className="font-mono-meta text-xs uppercase tracking-widest text-(--wire)">
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4 py-10">
+        <div className="w-full max-w-md rounded-[32px] border border-slate-200/70 bg-white p-8 shadow-xl shadow-slate-900/10">
+          <span className="inline-flex rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-indigo-600">
             Wire
           </span>
-          <h1 className="font-display text-2xl mt-2">Check your inbox</h1>
-          <p className="text-sm text-(--ink-soft) mt-1 max-w-sm">
+          <h1 className="mt-6 text-3xl font-semibold tracking-tight text-slate-900">
+            Check your inbox
+          </h1>
+          <p className="mt-3 text-sm leading-6 text-slate-600">
             We sent a confirmation link to {email}. Confirm your email, then
             sign in.
           </p>
           <Link
             href="/login"
-            className="inline-block mt-4 text-sm text-(--wire) underline underline-offset-2"
+            className="inline-flex mt-6 rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
           >
             Back to sign in
           </Link>
@@ -65,36 +67,45 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-100 via-white to-slate-200 flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-lg mx-auto rounded-4xl border border-slate-200/80 bg-white/90 shadow-[0_30px_80px_-30px_rgba(15,23,42,0.65)] backdrop-blur-xl p-8 sm:p-10">
-        <div className="mb-10 text-center">
-          <span className="inline-flex rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-indigo-600 shadow-sm">
-            Wire
-          </span>
-          <h1 className="mt-6 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
-            Join the feed
-          </h1>
-          <p className="mt-3 text-sm leading-6 text-slate-600 sm:text-base">
-            Post, follow people, and watch it update live — all in one place.
-          </p>
-        </div>
-
-        <div className="grid gap-6 sm:grid-cols-[1fr_0.4fr] sm:items-center sm:gap-8">
-          <div className="rounded-[28px] bg-slate-950/95 p-6 text-white shadow-xl shadow-slate-900/10 ring-1 ring-white/20 sm:p-8">
-            <p className="text-sm uppercase tracking-[0.28em] text-slate-400">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-white to-slate-200 flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-3xl rounded-[36px] border border-slate-200/80 bg-white/95 shadow-[0_40px_120px_-35px_rgba(15,23,42,0.2)] backdrop-blur-xl">
+        <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="relative overflow-hidden rounded-[36px] bg-gradient-to-b from-indigo-700 via-violet-700 to-slate-900 p-10 text-white sm:p-14">
+            <div className="absolute inset-x-0 top-0 h-40 bg-white/10 blur-3xl" />
+            <span className="inline-flex rounded-full bg-white/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.35em] text-slate-200">
               Welcome aboard
-            </p>
-            <h2 className="mt-5 text-3xl font-semibold tracking-tight">
+            </span>
+            <h1 className="mt-8 text-4xl font-semibold tracking-tight sm:text-5xl">
               Create your account
-            </h2>
-            <p className="mt-4 text-sm leading-6 text-slate-300">
+            </h1>
+            <p className="mt-5 max-w-md text-sm leading-6 text-slate-200/90">
               Securely create your profile and start sharing moments with others
               in real time.
             </p>
+            <div className="mt-10 space-y-5 rounded-3xl border border-white/10 bg-white/5 p-5 text-sm text-slate-200">
+              <p className="font-semibold">Why choose Wire?</p>
+              <ul className="space-y-3 text-slate-200/80">
+                <li>• Real-time feed updates</li>
+                <li>• Clean mobile-ready design</li>
+                <li>• Easy signup and quick onboarding</li>
+              </ul>
+            </div>
           </div>
 
-          <div className="rounded-[28px] bg-slate-50 p-6 shadow-[0_20px_80px_-35px_rgba(15,23,42,0.35)] ring-1 ring-slate-200/70 sm:p-8">
-            <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="rounded-[36px] bg-slate-50 p-8 sm:p-12">
+            <div className="text-center">
+              <span className="inline-flex rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-indigo-600">
+                Wire
+              </span>
+              <h2 className="mt-6 text-4xl font-semibold tracking-tight text-slate-900">
+                Join the feed
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                Post, follow people, and watch it update live.
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="mt-10 space-y-5">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
                   Username
@@ -150,7 +161,7 @@ export default function SignupPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex w-full items-center justify-center rounded-3xl bg-linear-to-r from-fuchsia-500 via-violet-600 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/20 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                className="w-full rounded-3xl bg-gradient-to-r from-fuchsia-500 via-violet-600 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/20 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading ? "Creating account…" : "Create account"}
               </button>
