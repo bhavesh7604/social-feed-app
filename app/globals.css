@@ -12,6 +12,57 @@
   }
 }
 
+.auth-shell {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: #f4f1ff;
+  background-image:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.08)),
+    url('/auth-bg.svg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.auth-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.04);
+  backdrop-filter: blur(0.5px);
+}
+
+.auth-shell > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  .auth-shell {
+    background-color: #0f172a;
+    background-image:
+      linear-gradient(135deg, rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.35)),
+      url('/auth-bg.svg');
+  }
+
+  .auth-shell::before {
+    background: rgba(2, 6, 23, 0.38);
+  }
+}
+
+@media (max-width: 640px) {
+  .auth-shell {
+    padding: 0.75rem;
+    background-position: center center;
+  }
+}
+
 /* Glassmorphism Cards & Modals */
 .glass-card {
   background: rgba(255, 255, 255, 0.85);

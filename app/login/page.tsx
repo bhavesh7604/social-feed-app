@@ -35,15 +35,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-4"
-      style={{
-        backgroundImage: "url('/auth-bg.svg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
+    <div className="auth-shell">
       <div className="w-full max-w-sm sm:max-w-md glass-card rounded-3xl p-8 space-y-6">
         {/* Brand Header */}
         <div className="text-center space-y-2">

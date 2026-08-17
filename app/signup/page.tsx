@@ -67,15 +67,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-4 py-12"
-      style={{
-        backgroundImage: "url('/auth-bg.svg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
+    <div className="auth-shell py-12">
       <div className="w-full max-w-3xl rounded-[36px] border border-slate-200/80 bg-white/95 shadow-[0_40px_120px_-35px_rgba(15,23,42,0.2)] backdrop-blur-xl">
         <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="relative overflow-hidden rounded-[36px] bg-linear-to-b from-indigo-700 via-violet-700 to-slate-900 p-10 text-white sm:p-14">
