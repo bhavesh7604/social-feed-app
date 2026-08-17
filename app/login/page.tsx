@@ -38,11 +38,11 @@ export default function LoginPage() {
     <div className="auth-shell">
       <div className="w-full max-w-sm sm:max-w-md glass-card rounded-3xl p-8 space-y-6">
         {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <span className="inline-block text-lg sm:text-xl font-black uppercase tracking-[0.32em] text-indigo-800 bg-gradient-to-r from-indigo-200 via-white to-violet-200 px-5 py-2.5 rounded-full border border-indigo-300 shadow-[0_10px_25px_rgba(79,70,229,0.15)] drop-shadow-[0_2px_0_rgba(255,255,255,0.8)] transform hover:scale-[1.02] transition-all duration-200">
+        <div className="text-center space-y-3">
+          <span className="inline-flex rounded-full border border-indigo-200 bg-gradient-to-r from-indigo-100 via-white to-violet-100 px-5 py-2.5 text-base font-black uppercase tracking-[0.38em] text-indigo-700 shadow-[0_8px_20px_rgba(99,102,241,0.12)] sm:text-lg">
             WIRE
           </span>
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
+          <h1 className="text-3xl font-extrabold tracking-[-0.05em] text-slate-900 sm:text-4xl">
             Welcome back
           </h1>
           <p className="text-sm text-slate-500">

@@ -70,34 +70,57 @@ export default function SignupPage() {
     <div className="auth-shell py-12">
       <div className="w-full max-w-3xl rounded-[36px] border border-slate-200/80 bg-white/95 shadow-[0_40px_120px_-35px_rgba(15,23,42,0.2)] backdrop-blur-xl">
         <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="relative overflow-hidden rounded-[36px] bg-linear-to-b from-indigo-700 via-violet-700 to-slate-900 p-10 text-white sm:p-14">
-            <div className="absolute inset-x-0 top-0 h-40 bg-white/10 blur-3xl" />
-            <span className="inline-flex rounded-full bg-white/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.35em] text-slate-200">
+          <div className="relative overflow-hidden rounded-[36px] bg-linear-to-br from-indigo-700 via-violet-700 to-slate-900 p-10 text-white sm:p-14">
+            <div className="absolute -left-10 top-8 h-28 w-28 rounded-full bg-white/10 blur-2xl" />
+            <div className="absolute -right-6 bottom-10 h-32 w-32 rounded-full bg-fuchsia-400/20 blur-3xl" />
+            <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-white/10 to-transparent" />
+
+            <span className="relative inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.35em] text-slate-100 shadow-[0_0_20px_rgba(255,255,255,0.08)] backdrop-blur-sm">
               Welcome aboard
             </span>
-            <h1 className="mt-8 text-4xl font-semibold tracking-tight sm:text-5xl">
+
+            <h1 className="relative mt-8 text-4xl font-semibold tracking-[-0.05em] sm:text-5xl">
               Create your account
             </h1>
-            <p className="mt-5 max-w-md text-sm leading-6 text-slate-200/90">
+
+            <p className="relative mt-5 max-w-md text-sm leading-7 text-slate-200/90">
               Securely create your profile and start sharing moments with others
               in real time.
             </p>
-            <div className="mt-10 space-y-5 rounded-3xl border border-white/10 bg-white/5 p-5 text-sm text-slate-200">
-              <p className="font-semibold">Why choose Wire?</p>
-              <ul className="space-y-3 text-slate-200/80">
-                <li>• Real-time feed updates</li>
-                <li>• Clean mobile-ready design</li>
-                <li>• Easy signup and quick onboarding</li>
+
+            <div className="relative mt-10 space-y-5 rounded-[28px] border border-white/10 bg-white/5 p-5 text-sm text-slate-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-sm">
+              <p className="text-base font-semibold tracking-[0.12em] text-white/90 uppercase">
+                Why choose Wire?
+              </p>
+              <ul className="space-y-3 text-slate-200/85">
+                <li className="flex items-center gap-3">
+                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-400/20 text-xs text-emerald-300">
+                    ✓
+                  </span>
+                  Real-time feed updates
+                </li>
+                <li className="flex items-center gap-3">
+                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-400/20 text-xs text-emerald-300">
+                    ✓
+                  </span>
+                  Clean mobile-ready design
+                </li>
+                <li className="flex items-center gap-3">
+                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-400/20 text-xs text-emerald-300">
+                    ✓
+                  </span>
+                  Easy signup and quick onboarding
+                </li>
               </ul>
             </div>
           </div>
 
           <div className="rounded-[36px] bg-slate-50 p-8 sm:p-12">
             <div className="text-center">
-              <span className="inline-flex rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-indigo-600">
+              <span className="inline-flex rounded-full border border-indigo-200 bg-gradient-to-r from-indigo-100 via-white to-violet-100 px-4 py-2 text-xs font-black uppercase tracking-[0.38em] text-indigo-700 shadow-[0_8px_20px_rgba(99,102,241,0.12)]">
                 Wire
               </span>
-              <h2 className="mt-6 text-4xl font-semibold tracking-tight text-slate-900">
+              <h2 className="mt-6 text-4xl font-semibold tracking-[-0.05em] text-slate-900">
                 Join the feed
               </h2>
               <p className="mt-3 text-sm leading-6 text-slate-600">
