@@ -39,7 +39,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm sm:max-w-md glass-card rounded-3xl p-8 space-y-6">
         {/* Brand Header */}
         <div className="text-center space-y-2">
-          <span className="text-xs font-black tracking-widest text-indigo-600 uppercase bg-indigo-50 px-3 py-1 rounded-full">
+          <span className="inline-block text-lg sm:text-xl font-black uppercase tracking-[0.32em] text-indigo-800 bg-gradient-to-r from-indigo-200 via-white to-violet-200 px-5 py-2.5 rounded-full border border-indigo-300 shadow-[0_10px_25px_rgba(79,70,229,0.15)] drop-shadow-[0_2px_0_rgba(255,255,255,0.8)] transform hover:scale-[1.02] transition-all duration-200">
             WIRE
           </span>
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
