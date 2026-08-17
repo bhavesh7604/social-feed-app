@@ -44,7 +44,7 @@ export default function SignupPage() {
   if (checkEmail) {
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4 py-10">
-        <div className="w-full max-w-md rounded-[32px] border border-slate-200/70 bg-white p-8 shadow-xl shadow-slate-900/10">
+        <div className="w-full max-w-md rounded-4xl border border-slate-200/70 bg-white p-8 shadow-xl shadow-slate-900/10">
           <span className="inline-flex rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-indigo-600">
             Wire
           </span>
@@ -67,10 +67,18 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-white to-slate-200 flex items-center justify-center px-4 py-12">
+    <div
+      className="min-h-screen flex items-center justify-center px-4 py-12"
+      style={{
+        backgroundImage: "url('/auth-bg.svg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <div className="w-full max-w-3xl rounded-[36px] border border-slate-200/80 bg-white/95 shadow-[0_40px_120px_-35px_rgba(15,23,42,0.2)] backdrop-blur-xl">
         <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="relative overflow-hidden rounded-[36px] bg-gradient-to-b from-indigo-700 via-violet-700 to-slate-900 p-10 text-white sm:p-14">
+          <div className="relative overflow-hidden rounded-[36px] bg-linear-to-b from-indigo-700 via-violet-700 to-slate-900 p-10 text-white sm:p-14">
             <div className="absolute inset-x-0 top-0 h-40 bg-white/10 blur-3xl" />
             <span className="inline-flex rounded-full bg-white/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.35em] text-slate-200">
               Welcome aboard
@@ -161,7 +169,7 @@ export default function SignupPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-3xl bg-gradient-to-r from-fuchsia-500 via-violet-600 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/20 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                className="w-full rounded-3xl bg-linear-to-r from-fuchsia-500 via-violet-600 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/20 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading ? "Creating account…" : "Create account"}
               </button>
