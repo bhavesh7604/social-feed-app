@@ -125,37 +125,37 @@ export default async function ProfilePage({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(168,85,247,0.12),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.1),transparent_28%),linear-gradient(180deg,#f8f7ff_0%,#f5f7fb_35%,#eef2ff_100%)] text-slate-900">
       <Navbar profile={currentUserProfile} />
 
-      <main className="w-full max-w-xl mx-auto px-4 py-8 space-y-6 sm:px-6">
+      <main className="mx-auto w-full max-w-xl space-y-6 px-4 py-8 sm:px-6">
         {/* Profile Header Card */}
-        <div className="glass-card p-4 sm:p-6 rounded-3xl space-y-4">
+        <div className="rounded-4xl border border-slate-200/80 bg-white/80 p-4 shadow-[0_28px_60px_-35px_rgba(15,23,42,0.25)] backdrop-blur-xl sm:p-6">
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             {targetProfile.avatar_url ? (
               <img
                 src={targetProfile.avatar_url}
                 alt={targetProfile.username}
-                className="w-20 h-20 rounded-full object-cover ring-4 ring-indigo-500/10 shadow-md"
+                className="h-20 w-20 rounded-full object-cover ring-4 ring-indigo-500/10 shadow-md"
               />
             ) : (
-              <div className="w-20 h-20 rounded-full bg-linear-to-tr from-pink-500 to-indigo-500 flex items-center justify-center font-black text-2xl text-white shadow-md">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-tr from-pink-500 via-violet-500 to-indigo-500 text-2xl font-black text-white shadow-md">
                 {targetProfile.username?.[0]?.toUpperCase()}
               </div>
             )}
 
-            <div className="space-y-1 flex-1 min-w-0">
-              <h1 className="text-lg font-extrabold text-slate-900 sm:text-xl">
+            <div className="min-w-0 flex-1 space-y-1">
+              <h1 className="text-lg font-extrabold tracking-[-0.04em] text-slate-900 sm:text-xl">
                 {targetProfile.full_name || targetProfile.username}
               </h1>
-              <p className="text-xs font-semibold text-indigo-600">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-600">
                 @{targetProfile.username}
               </p>
             </div>
 
             {/* Action Buttons */}
             {!isOwnProfile && (
-              <div className="flex flex-col items-stretch gap-2 justify-end w-full sm:flex-row sm:items-center sm:w-auto">
+              <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center">
                 <FollowButton
                   targetUserId={targetProfile.id}
                   currentUserId={user.id}
@@ -165,7 +165,7 @@ export default async function ProfilePage({
                 <form action={handleStartChat} className="w-full sm:w-auto">
                   <button
                     type="submit"
-                    className="w-full sm:w-auto px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition cursor-pointer"
+                    className="w-full cursor-pointer rounded-xl bg-slate-100 px-4 py-2 text-xs font-bold text-slate-800 transition hover:bg-slate-200 sm:w-auto"
                   >
                     Message
                   </button>
@@ -175,14 +175,14 @@ export default async function ProfilePage({
           </div>
 
           {targetProfile.bio && (
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed pt-2 border-t border-slate-100">
+            <p className="border-t border-slate-100 pt-3 text-sm leading-relaxed text-slate-600 sm:text-base">
               {targetProfile.bio}
             </p>
           )}
 
-          <div className="flex gap-6 pt-3 border-t border-slate-100 text-xs font-semibold text-slate-500">
+          <div className="flex gap-6 border-t border-slate-100 pt-3 text-xs font-semibold text-slate-500">
             <div>
-              <span className="text-slate-900 font-extrabold mr-1">
+              <span className="mr-1 font-extrabold text-slate-900">
                 {userPosts?.length || 0}
               </span>
               posts
@@ -192,7 +192,7 @@ export default async function ProfilePage({
 
         {/* User's Posts Feed */}
         <div className="space-y-4">
-          <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider px-1">
+          <h2 className="px-1 text-sm font-bold uppercase tracking-[0.22em] text-slate-500">
             Posts
           </h2>
 
@@ -205,7 +205,7 @@ export default async function ProfilePage({
           ))}
 
           {(!userPosts || userPosts.length === 0) && (
-            <p className="text-center text-xs text-slate-400 py-10">
+            <p className="py-10 text-center text-xs text-slate-400">
               No posts shared yet.
             </p>
           )}

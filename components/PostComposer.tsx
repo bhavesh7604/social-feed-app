@@ -56,17 +56,17 @@ export default function PostComposer({ profile }: { profile: Profile }) {
   };
 
   return (
-    <div className="glass-card rounded-2xl p-4 border border-slate-200/80">
+    <div className="rounded-[28px] border border-slate-200/80 bg-linear-to-br from-white via-slate-50 to-violet-50 p-4 shadow-[0_20px_50px_-30px_rgba(79,70,229,0.25)]">
       <form onSubmit={handlePost} className="space-y-3">
         <div className="flex flex-col gap-3 sm:flex-row">
           {profile?.avatar_url ? (
             <img
               src={profile.avatar_url}
               alt={profile.username}
-              className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-500/20"
+              className="h-10 w-10 rounded-full object-cover ring-2 ring-indigo-500/20"
             />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center font-bold text-indigo-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-indigo-100 bg-linear-to-br from-indigo-100 to-violet-100 text-sm font-bold text-indigo-700">
               {profile?.username?.[0]?.toUpperCase()}
             </div>
           )}
@@ -76,27 +76,27 @@ export default function PostComposer({ profile }: { profile: Profile }) {
             onChange={(e) => setContent(e.target.value)}
             placeholder="What's on your mind?"
             rows={2}
-            className="w-full bg-transparent resize-none border-none focus:outline-none text-sm text-slate-900 placeholder:text-slate-400"
+            className="w-full resize-none rounded-2xl border border-slate-200 bg-white/80 px-3 py-3 text-sm text-slate-900 shadow-inner shadow-slate-100 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-4 focus:ring-indigo-100"
           />
         </div>
 
         {imageFile && (
-          <div className="flex items-center justify-between bg-slate-100 px-3 py-1.5 rounded-lg text-xs text-slate-600">
+          <div className="flex items-center justify-between rounded-xl bg-slate-100 px-3 py-1.5 text-xs text-slate-600">
             <span>📷 {imageFile.name}</span>
             <button
               type="button"
               onClick={() => setImageFile(null)}
-              className="text-slate-400 hover:text-rose-500 font-bold"
+              className="font-bold text-slate-400 hover:text-rose-500"
             >
               ✕
             </button>
           </div>
         )}
 
-        <div className="flex flex-col gap-3 pt-2 border-t border-slate-100 sm:flex-row sm:items-center sm:justify-between">
-          <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-indigo-600 cursor-pointer transition w-full sm:w-auto">
+        <div className="flex flex-col gap-3 border-t border-slate-100 pt-2 sm:flex-row sm:items-center sm:justify-between">
+          <label className="flex w-full cursor-pointer items-center gap-1.5 text-xs font-semibold text-slate-500 transition hover:text-indigo-600 sm:w-auto">
             <svg
-              className="w-4 h-4"
+              className="h-4 w-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -120,7 +120,7 @@ export default function PostComposer({ profile }: { profile: Profile }) {
           <button
             type="submit"
             disabled={loading || (!content.trim() && !imageFile)}
-            className="w-full sm:w-auto btn-gradient px-4 py-1.5 rounded-xl text-xs font-bold disabled:opacity-40 cursor-pointer"
+            className="btn-gradient w-full cursor-pointer rounded-xl px-4 py-1.5 text-xs font-bold disabled:opacity-40 sm:w-auto"
           >
             {loading ? "Posting..." : "Post"}
           </button>

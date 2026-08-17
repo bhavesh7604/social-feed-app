@@ -52,13 +52,20 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(168,85,247,0.14),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.12),transparent_28%),linear-gradient(180deg,#f8f7ff_0%,#f5f7fb_42%,#eef2ff_100%)] text-slate-900">
       <Navbar profile={profile} />
 
-      <main className="w-full max-w-xl mx-auto px-4 py-6 space-y-6 sm:px-6">
-        <PostComposer profile={profile} />
+      <main className="mx-auto w-full max-w-xl space-y-6 px-4 py-6 sm:px-6">
+        <div className="rounded-[30px] border border-white/60 bg-white/60 p-2 shadow-[0_25px_60px_-25px_rgba(79,70,229,0.18)] backdrop-blur-xl">
+          <PostComposer profile={profile} />
+        </div>
 
-        <RealtimeFeed initialPosts={initialPosts || []} currentUser={profile} />
+        <div className="space-y-4">
+          <RealtimeFeed
+            initialPosts={initialPosts || []}
+            currentUser={profile}
+          />
+        </div>
       </main>
     </div>
   );

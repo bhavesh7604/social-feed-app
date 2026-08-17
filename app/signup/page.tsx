@@ -73,13 +73,13 @@ export default function SignupPage() {
           <div className="relative overflow-hidden rounded-[36px] bg-linear-to-br from-indigo-700 via-violet-700 to-slate-900 p-10 text-white sm:p-14">
             <div className="absolute -left-10 top-8 h-28 w-28 rounded-full bg-white/10 blur-2xl" />
             <div className="absolute -right-6 bottom-10 h-32 w-32 rounded-full bg-fuchsia-400/20 blur-3xl" />
-            <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-white/10 to-transparent" />
+            <div className="absolute inset-x-0 top-0 h-36 bg-linear-to-b from-white/10 to-transparent" />
 
             <span className="relative inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.35em] text-slate-100 shadow-[0_0_20px_rgba(255,255,255,0.08)] backdrop-blur-sm">
               Welcome aboard
             </span>
 
-            <h1 className="relative mt-8 text-4xl font-semibold tracking-[-0.05em] sm:text-5xl">
+            <h1 className="relative mt-8 text-4xl font-semibold tracking-tighter sm:text-5xl">
               Create your account
             </h1>
 
@@ -117,10 +117,10 @@ export default function SignupPage() {
 
           <div className="rounded-[36px] bg-slate-50 p-8 sm:p-12">
             <div className="text-center">
-              <span className="inline-flex rounded-full border border-indigo-200 bg-gradient-to-r from-indigo-100 via-white to-violet-100 px-4 py-2 text-xs font-black uppercase tracking-[0.38em] text-indigo-700 shadow-[0_8px_20px_rgba(99,102,241,0.12)]">
+              <span className="inline-flex rounded-full border border-indigo-200 bg-linear-to-r from-indigo-100 via-white to-violet-100 px-4 py-2 text-xs font-black uppercase tracking-[0.38em] text-indigo-700 shadow-[0_8px_20px_rgba(99,102,241,0.12)]">
                 Wire
               </span>
-              <h2 className="mt-6 text-4xl font-semibold tracking-[-0.05em] text-slate-900">
+              <h2 className="mt-6 text-4xl font-semibold tracking-tighter text-slate-900">
                 Join the feed
               </h2>
               <p className="mt-3 text-sm leading-6 text-slate-600">
