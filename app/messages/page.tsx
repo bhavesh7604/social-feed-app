@@ -59,12 +59,12 @@ export default async function MessagesPage({
         className={`w-full mx-auto px-4 py-6 sm:px-6 ${
           directChat
             ? "max-w-3xl"
-            : "max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-6"
+            : "max-w-3xl"
         }`}
       >
         {/* Conversations Sidebar */}
         {!directChat && (
-          <div className="glass-card rounded-2xl border border-slate-200/80 p-4 space-y-3 min-h-[40vh] md:h-150 overflow-y-auto">
+          <div className="glass-card rounded-2xl border border-slate-200/80 p-4 space-y-3 min-h-[40vh] md:min-h-150 overflow-y-auto">
             <h2 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">
               Messages
             </h2>
@@ -118,35 +118,21 @@ export default async function MessagesPage({
         )}
 
         {/* Chat Thread Area */}
-        <div className={directChat ? "" : "md:col-span-2"}>
-          {conversationId && activeConversation ? (
-            <div>
-              {directChat && (
-                <Link
-                  href="/messages"
-                  className="mb-3 inline-flex text-xs font-semibold text-slate-500 transition hover:text-indigo-600"
-                >
-                  ← All messages
-                </Link>
-              )}
-              <ChatThread
-                conversationId={conversationId}
-                currentUserId={user.id}
-                recipientProfile={
-                  activeConversation.profiles as unknown as Profile
-                }
-              />
-            </div>
-          ) : (
-            <div className="glass-card rounded-2xl border border-slate-200/80 min-h-[40vh] md:h-150 flex flex-col items-center justify-center text-center p-6 text-slate-400">
-              <span className="text-4xl mb-2">💬</span>
-              <p className="text-sm font-semibold">Your Direct Messages</p>
-              <p className="text-xs">
-                Select a conversation from the left to start chatting.
-              </p>
-            </div>
-          )}
-        </div>
+        {directChat && conversationId && activeConversation && (
+          <div>
+            <Link
+              href="/messages"
+              className="mb-3 inline-flex text-xs font-semibold text-slate-500 transition hover:text-indigo-600"
+            >
+              ← All messages
+            </Link>
+            <ChatThread
+              conversationId={conversationId}
+              currentUserId={user.id}
+              recipientProfile={activeConversation.profiles as unknown as Profile}
+            />
+          </div>
+        )}
       </main>
     </div>
   );
