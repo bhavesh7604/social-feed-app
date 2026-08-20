@@ -27,6 +27,7 @@ export default function PostCard({
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [mediaError, setMediaError] = useState(false);
   const isOwner = post.user_id === currentUser.id;
   const isVideo = /\.(mp4|webm|ogg|mov)(?:\?|$)/i.test(post.image_url || "");
 
@@ -166,7 +167,22 @@ export default function PostCard({
       {post.image_url && (
         <div className="w-full overflow-hidden border-y border-slate-100 bg-slate-100">
           {isVideo ? (
-            <video src={post.image_url} controls className="max-h-125 w-full" />
+            <>
+              <video
+                src={post.image_url}
+                controls
+                playsInline
+                preload="metadata"
+                className="aspect-video max-h-125 w-full bg-slate-950 object-contain"
+                onError={() => setMediaError(true)}
+              />
+              {mediaError && (
+                <p className="px-4 py-3 text-xs text-slate-500">
+                  This video format is not supported by this browser. Upload an
+                  MP4 or WebM version to play it on desktop.
+                </p>
+              )}
+            </>
           ) : (
             <img
               src={post.image_url}

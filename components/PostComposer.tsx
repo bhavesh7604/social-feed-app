@@ -22,12 +22,24 @@ export default function PostComposer({ profile }: { profile: Profile }) {
       let mediaUrl = null;
 
       if (mediaFile) {
+        if (
+          mediaFile.type.startsWith("video/") &&
+          !["video/mp4", "video/webm", "video/ogg"].includes(mediaFile.type)
+        ) {
+          throw new Error(
+            "Please choose an MP4, WebM, or OGG video. Phone MOV/HEVC videos are not supported by desktop browsers.",
+          );
+        }
+
         const fileExt = mediaFile.name.split(".").pop();
         const filePath = `${profile.id}-${Date.now()}.${fileExt}`;
 
         const { error: uploadError } = await supabase.storage
           .from("post-images")
-          .upload(filePath, mediaFile);
+          .upload(filePath, mediaFile, {
+            contentType: mediaFile.type,
+            upsert: false,
+          });
 
         if (uploadError) throw uploadError;
 
@@ -114,7 +126,7 @@ export default function PostComposer({ profile }: { profile: Profile }) {
             Add Image or Video
             <input
               type="file"
-              accept="image/*,video/*"
+              accept="image/*,video/mp4,video/webm,video/ogg"
               className="hidden"
               onChange={(e) => setMediaFile(e.target.files?.[0] || null)}
             />
