@@ -57,9 +57,7 @@ export default async function MessagesPage({
 
       <main
         className={`w-full mx-auto px-4 py-6 sm:px-6 ${
-          directChat
-            ? "max-w-3xl"
-            : "max-w-3xl"
+          directChat ? "max-w-3xl" : "max-w-3xl"
         }`}
       >
         {/* Conversations Sidebar */}
@@ -77,7 +75,7 @@ export default async function MessagesPage({
                 return (
                   <Link
                     key={item.conversation_id}
-                    href={`/messages?conversationId=${item.conversation_id}`}
+                    href={`/messages?conversationId=${item.conversation_id}&view=chat`}
                     className={`flex items-center gap-3 p-3 rounded-xl transition ${
                       isActive
                         ? "bg-indigo-50 border border-indigo-100"
@@ -129,7 +127,9 @@ export default async function MessagesPage({
             <ChatThread
               conversationId={conversationId}
               currentUserId={user.id}
-              recipientProfile={activeConversation.profiles as unknown as Profile}
+              recipientProfile={
+                activeConversation.profiles as unknown as Profile
+              }
             />
           </div>
         )}

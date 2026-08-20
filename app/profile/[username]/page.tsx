@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import Navbar from "@/components/Navbar";
 import PostCard from "@/components/PostCard";
 import FollowButton from "@/components/FollowButton";
+import MessageButton from "@/components/MessageButton";
 import { notFound, redirect } from "next/navigation";
 
 export default async function ProfilePage({
@@ -162,14 +163,7 @@ export default async function ProfilePage({
                   initialIsFollowing={isFollowing}
                 />
 
-                <form action={handleStartChat} className="w-full sm:w-auto">
-                  <button
-                    type="submit"
-                    className="w-full cursor-pointer rounded-xl bg-slate-100 px-4 py-2 text-xs font-bold text-slate-800 transition hover:bg-slate-200 sm:w-auto"
-                  >
-                    Message
-                  </button>
-                </form>
+                <MessageButton action={handleStartChat} />
               </div>
             )}
           </div>
