@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import { Bell, Compass, Home, LogOut, UserRound } from "lucide-react";
 import { Profile } from "@/lib/types";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -18,63 +19,67 @@ export default function Navbar({ profile }: { profile: Profile }) {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/75 backdrop-blur-xl shadow-[0_10px_30px_-18px_rgba(15,23,42,0.18)]">
-      <div className="mx-auto flex max-w-xl flex-col justify-between gap-3 px-4 py-3 sm:flex-row sm:items-center md:h-16">
-        {/* Logo */}
-        <Link href="/" className="group flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-linear-to-tr from-pink-500 via-violet-500 to-indigo-600 text-sm font-black text-white shadow-[0_10px_20px_rgba(168,85,247,0.35)] transition group-hover:scale-105">
-            W
-          </div>
-          <span className="bg-linear-to-r from-slate-900 via-slate-700 to-indigo-600 bg-clip-text text-xl font-black tracking-[-0.04em] text-transparent">
-            Wire
-          </span>
-        </Link>
-
-        {/* Navigation Items */}
-        <nav className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto">
+    <>
+      <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/90 shadow-[0_10px_30px_-18px_rgba(15,23,42,0.18)] backdrop-blur-xl">
+        <div className="relative mx-auto flex h-16 max-w-5xl items-center justify-center px-4 sm:h-[4.5rem]">
           <Link
             href="/"
-            className="rounded-full px-3 py-1.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-indigo-600"
+            className="group flex items-center gap-2"
+            aria-label="Wire home"
           >
-            Feed
-          </Link>
-          <Link
-            href="/discover"
-            className="rounded-full px-3 py-1.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-indigo-600"
-          >
-            Discover
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-linear-to-tr from-pink-500 via-violet-500 to-indigo-600 text-sm font-black text-white shadow-[0_10px_20px_rgba(168,85,247,0.35)] transition group-hover:scale-105">
+              W
+            </div>
+            <span className="text-xl font-black tracking-[-0.04em] text-slate-900">
+              Wire
+            </span>
           </Link>
 
-          {/* Live Notification Dropdown */}
-          {profile?.id && <NotificationDropdown userId={profile.id} />}
+          <div className="absolute right-4 flex items-center gap-1 sm:right-6">
+            {profile?.id && <NotificationDropdown userId={profile.id} />}
+            <button
+              type="button"
+              onClick={handleSignOut}
+              aria-label="Sign out"
+              title="Sign out"
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-slate-500 transition hover:bg-rose-50 hover:text-rose-500 focus:outline-none focus:ring-4 focus:ring-rose-100"
+            >
+              <LogOut size={18} aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+      </header>
 
-          {/* User Profile Avatar Link */}
+      <nav
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200/90 bg-white/95 shadow-[0_-12px_30px_-20px_rgba(15,23,42,0.3)] backdrop-blur-xl"
+        aria-label="Main navigation"
+      >
+        <div className="mx-auto flex h-[4.5rem] max-w-2xl items-center justify-around px-5 pb-[env(safe-area-inset-bottom)] sm:h-20 sm:px-12">
+          <Link href="/" className="bottom-nav-link">
+            <Home size={21} strokeWidth={2.2} aria-hidden="true" />
+            <span>Feed</span>
+          </Link>
+          <Link href="/discover" className="bottom-nav-link">
+            <Compass size={22} strokeWidth={2.2} aria-hidden="true" />
+            <span>Discover</span>
+          </Link>
           <Link
             href={`/profile/${profile.username}`}
-            className="ml-1 flex items-center gap-2 rounded-full p-1 transition hover:bg-slate-100"
+            className="bottom-nav-link"
           >
             {profile.avatar_url ? (
               <img
                 src={profile.avatar_url}
-                alt={profile.username}
-                className="h-8 w-8 rounded-full object-cover ring-2 ring-indigo-500/20"
+                alt=""
+                className="h-[22px] w-[22px] rounded-full object-cover"
               />
             ) : (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-indigo-100 to-violet-100 text-xs font-bold text-indigo-700">
-                {profile.username?.[0]?.toUpperCase()}
-              </div>
+              <UserRound size={21} strokeWidth={2.2} aria-hidden="true" />
             )}
+            <span>Profile</span>
           </Link>
-
-          {/* Sign Out */}
-          <button
-            onClick={handleSignOut}
-            className="ml-0 cursor-pointer rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-500 sm:ml-2"
-          >
-            Sign out
-          </button>
-        </nav>
-      </div>
-    </header>
+        </div>
+      </nav>
+    </>
   );
 }
