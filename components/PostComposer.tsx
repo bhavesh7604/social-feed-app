@@ -7,27 +7,27 @@ import { Profile } from "@/lib/types";
 
 export default function PostComposer({ profile }: { profile: Profile }) {
   const [content, setContent] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
   const supabase = createClient();
 
   const handlePost = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!content.trim() && !imageFile) return;
+    if (!content.trim() && !mediaFile) return;
 
     setLoading(true);
 
     try {
-      let imageUrl = null;
+      let mediaUrl = null;
 
-      if (imageFile) {
-        const fileExt = imageFile.name.split(".").pop();
+      if (mediaFile) {
+        const fileExt = mediaFile.name.split(".").pop();
         const filePath = `${profile.id}-${Date.now()}.${fileExt}`;
 
         const { error: uploadError } = await supabase.storage
           .from("post-images")
-          .upload(filePath, imageFile);
+          .upload(filePath, mediaFile);
 
         if (uploadError) throw uploadError;
 
@@ -35,19 +35,19 @@ export default function PostComposer({ profile }: { profile: Profile }) {
           .from("post-images")
           .getPublicUrl(filePath);
 
-        imageUrl = publicUrlData.publicUrl;
+        mediaUrl = publicUrlData.publicUrl;
       }
 
       const { error: dbError } = await supabase.from("posts").insert({
         user_id: profile.id,
         content: content.trim() || null,
-        image_url: imageUrl,
+        image_url: mediaUrl,
       });
 
       if (dbError) throw dbError;
 
       setContent("");
-      setImageFile(null);
+      setMediaFile(null);
     } catch (err: any) {
       alert("Error creating post: " + err.message);
     } finally {
@@ -80,12 +80,15 @@ export default function PostComposer({ profile }: { profile: Profile }) {
           />
         </div>
 
-        {imageFile && (
+        {mediaFile && (
           <div className="flex items-center justify-between rounded-xl bg-slate-100 px-3 py-1.5 text-xs text-slate-600">
-            <span>📷 {imageFile.name}</span>
+            <span>
+              {mediaFile.type.startsWith("video/") ? "Video" : "Image"}:{" "}
+              {mediaFile.name}
+            </span>
             <button
               type="button"
-              onClick={() => setImageFile(null)}
+              onClick={() => setMediaFile(null)}
               className="font-bold text-slate-400 hover:text-rose-500"
             >
               ✕
@@ -108,18 +111,18 @@ export default function PostComposer({ profile }: { profile: Profile }) {
                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            Add Image
+            Add Image or Video
             <input
               type="file"
-              accept="image/*"
+              accept="image/*,video/*"
               className="hidden"
-              onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+              onChange={(e) => setMediaFile(e.target.files?.[0] || null)}
             />
           </label>
 
           <button
             type="submit"
-            disabled={loading || (!content.trim() && !imageFile)}
+            disabled={loading || (!content.trim() && !mediaFile)}
             className="btn-gradient w-full cursor-pointer rounded-xl px-4 py-1.5 text-xs font-bold disabled:opacity-40 sm:w-auto"
           >
             {loading ? "Posting..." : "Post"}

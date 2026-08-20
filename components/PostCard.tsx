@@ -28,6 +28,7 @@ export default function PostCard({
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const isOwner = post.user_id === currentUser.id;
+  const isVideo = /\.(mp4|webm|ogg|mov)(?:\?|$)/i.test(post.image_url || "");
 
   // Check if current user has already liked this post
   const isLikedByCurrentUser =
@@ -164,11 +165,15 @@ export default function PostCard({
       {/* Post Media */}
       {post.image_url && (
         <div className="w-full overflow-hidden border-y border-slate-100 bg-slate-100">
-          <img
-            src={post.image_url}
-            alt="Post media"
-            className="h-auto max-h-125 w-full object-cover"
-          />
+          {isVideo ? (
+            <video src={post.image_url} controls className="max-h-125 w-full" />
+          ) : (
+            <img
+              src={post.image_url}
+              alt="Post media"
+              className="h-auto max-h-125 w-full object-cover"
+            />
+          )}
         </div>
       )}
 

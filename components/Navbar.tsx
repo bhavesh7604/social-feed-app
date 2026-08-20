@@ -2,7 +2,14 @@
 "use client";
 
 import Link from "next/link";
-import { Compass, Home, LogOut, MessageCircle, UserRound } from "lucide-react";
+import {
+  Compass,
+  Home,
+  LogOut,
+  MessageCircle,
+  Plus,
+  UserRound,
+} from "lucide-react";
 import { Profile } from "@/lib/types";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -62,6 +69,14 @@ export default function Navbar({ profile }: { profile: Profile }) {
           <Link href="/discover" className="bottom-nav-link">
             <Compass size={22} strokeWidth={2.2} aria-hidden="true" />
             <span>Discover</span>
+          </Link>
+          <Link
+            href="/post"
+            aria-label="Create post"
+            title="Create post"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-linear-to-tr from-pink-500 via-violet-500 to-indigo-600 text-white shadow-[0_10px_20px_rgba(168,85,247,0.3)] transition hover:scale-105 focus:outline-none focus:ring-4 focus:ring-indigo-100"
+          >
+            <Plus size={25} strokeWidth={2.5} aria-hidden="true" />
           </Link>
           <Link href="/messages" className="bottom-nav-link">
             <MessageCircle size={21} strokeWidth={2.2} aria-hidden="true" />
