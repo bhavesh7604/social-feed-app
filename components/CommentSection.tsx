@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { formatDistanceToNowStrict } from "date-fns";
 import { createClient } from "@/lib/supabase/client";
 import type { Comment, Profile } from "@/lib/types";
 
@@ -16,7 +15,7 @@ export default function CommentSection({
   currentUser: Profile;
   initialComments: ExtendedComment[];
 }) {
-  const supabase = createClient();
+  const [supabase] = useState(createClient);
   const [comments, setComments] = useState<ExtendedComment[]>(initialComments);
   const [text, setText] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -44,7 +43,7 @@ export default function CommentSection({
           const { data: author } = await supabase
             .from("profiles")
             .select("*")
-            .eq("id", newComment.user_id || (newComment as any).author_id)
+            .eq("id", newComment.author_id)
             .single();
 
           if (author) {
