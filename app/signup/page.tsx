@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function SignupPage() {
   const router = useRouter();
-  const supabase = createClient();
+  const [supabase] = useState(createClient);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,19 +17,38 @@ export default function SignupPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (loading) return;
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedUsername = username.trim();
     setLoading(true);
     setError(null);
 
     const { data, error } = await supabase.auth.signUp({
-      email,
+      email: normalizedEmail,
       password,
-      options: { data: { username } },
+      options: { data: { username: normalizedUsername } },
     });
 
     setLoading(false);
 
     if (error) {
-      setError(error.message);
+      if (error.message.toLowerCase().includes("rate limit")) {
+        setError(
+          "Too many signup attempts. Please wait a few minutes and try again.",
+        );
+      } else if (error.message.toLowerCase().includes("password")) {
+        setError("Please choose a stronger password and try again.");
+      } else {
+        setError(
+          "We could not create your account. Please check your details and try again.",
+        );
+      }
+      return;
+    }
+
+    if (data.user && data.user.identities?.length === 0) {
+      setError("This email is already registered. Please sign in instead.");
       return;
     }
 

@@ -21,7 +21,7 @@ export default function Navbar({ profile }: { profile: Profile }) {
   return (
     <>
       <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/90 shadow-[0_10px_30px_-18px_rgba(15,23,42,0.18)] backdrop-blur-xl">
-        <div className="relative mx-auto flex h-16 max-w-5xl items-center justify-center px-4 sm:h-[4.5rem]">
+        <div className="relative mx-auto flex h-16 max-w-5xl items-center justify-center px-4 sm:h-18">
           <Link
             href="/"
             className="group flex items-center gap-2"
@@ -54,7 +54,7 @@ export default function Navbar({ profile }: { profile: Profile }) {
         className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200/90 bg-white/95 shadow-[0_-12px_30px_-20px_rgba(15,23,42,0.3)] backdrop-blur-xl"
         aria-label="Main navigation"
       >
-        <div className="mx-auto flex h-[4.5rem] max-w-2xl items-center justify-around px-5 pb-[env(safe-area-inset-bottom)] sm:h-20 sm:px-12">
+        <div className="mx-auto flex h-18 max-w-2xl items-center justify-around px-5 pb-[env(safe-area-inset-bottom)] sm:h-20 sm:px-12">
           <Link href="/" className="bottom-nav-link">
             <Home size={21} strokeWidth={2.2} aria-hidden="true" />
             <span>Feed</span>
@@ -71,7 +71,7 @@ export default function Navbar({ profile }: { profile: Profile }) {
               <img
                 src={profile.avatar_url}
                 alt=""
-                className="h-[22px] w-[22px] rounded-full object-cover"
+                className="h-5.5 w-5.5 rounded-full object-cover"
               />
             ) : (
               <UserRound size={21} strokeWidth={2.2} aria-hidden="true" />
