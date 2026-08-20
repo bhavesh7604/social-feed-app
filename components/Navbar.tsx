@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, Compass, Home, LogOut, UserRound } from "lucide-react";
+import { Compass, Home, LogOut, MessageCircle, UserRound } from "lucide-react";
 import { Profile } from "@/lib/types";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -62,6 +62,10 @@ export default function Navbar({ profile }: { profile: Profile }) {
           <Link href="/discover" className="bottom-nav-link">
             <Compass size={22} strokeWidth={2.2} aria-hidden="true" />
             <span>Discover</span>
+          </Link>
+          <Link href="/messages" className="bottom-nav-link">
+            <MessageCircle size={21} strokeWidth={2.2} aria-hidden="true" />
+            <span>Messages</span>
           </Link>
           <Link
             href={`/profile/${profile.username}`}

@@ -121,7 +121,7 @@ export default async function ProfilePage({
       }
     }
 
-    redirect(`/messages?conversationId=${targetConvoId}`);
+    redirect(`/messages?conversationId=${targetConvoId}&view=chat`);
   }
 
   return (

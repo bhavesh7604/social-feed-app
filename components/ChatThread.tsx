@@ -16,12 +16,11 @@ export default function ChatThread({
   currentUserId,
   recipientProfile,
 }: ChatThreadProps) {
+  const [supabase] = useState(createClient);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const supabase = createClient();
-
   // Auto-scroll to bottom of messages
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -66,7 +65,12 @@ export default function ChatThread({
             .single();
 
           if (data) {
-            setMessages((prev) => [...prev, data as unknown as Message]);
+            setMessages((prev) => {
+              const message = data as unknown as Message;
+              return prev.some((item) => item.id === message.id)
+                ? prev
+                : [...prev, message];
+            });
             setTimeout(scrollToBottom, 50);
           }
         },
